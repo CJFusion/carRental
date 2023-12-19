@@ -1,0 +1,230 @@
+.centeredBody {
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0 auto;
+	padding: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	background-color: #f4f4f4;
+}
+
+.homeBody {
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0 auto;
+	/* padding: 20px; */
+	/* display: flex; */
+	justify-content: center;
+	align-items: center;
+	/* height: 100%; */
+	background-color: #f4f4f4;
+}
+
+#loginBody{
+	height: 80vh !important;
+}
+
+.navBar{
+	padding: 0%;
+	display: flex;
+	justify-content: center;
+	background-color: #788575;
+	align-items: center;
+	align-content: center;
+	text-align: center;
+}
+
+.navBar_1{
+	width: 90%;
+}
+
+
+.container{
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	width: 300px;
+}
+
+#signUpContainer {
+	width: 400px !important;
+}
+
+.container h2{
+	text-align: center;
+}
+
+.container form{
+	display: flex;
+	flex-direction: column;
+}
+
+.blueBtn,
+.greenBtn,
+.container form input,
+.container form select,
+button.register-btn{
+	margin-bottom: 15px;
+	padding: 8px;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+button.register-btn{
+	margin-right: 2%;
+	margin-left: 2%;
+	font-weight: bold;
+	border: 1px solid #555;
+	background-color: #5a7096;
+	color: #fff;
+}
+
+.blueBtn,
+.greenBtn,
+.container form input[type="submit"],
+.container button.register-btn,
+.container form input[type="submit"].register-btn{
+	text-align: center;
+	font-size: large;
+	font-weight: bolder;
+	background-color: #007bff;
+	color: #fff;
+}
+
+.greenBtn{
+	display:flex;
+	margin:0 auto;
+	width: fit-content;
+	background-color: #42b72a;
+}
+
+/* hover animation */
+.blueBtn:hover,
+.container form input[type="submit"]:hover{
+	background-color: #0056b3;
+}
+
+.greenBtn:hover,
+button.register-btn:hover,
+.container form input[type="submit"].register-btn:hover{
+	background-color: #36a420;
+}
+
+/* Hover End */
+
+
+
+/* Overlay for Login */
+.overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #dbd3d3;
+	padding: 20px;
+	border-radius: 10px;
+	text-align: center;
+}
+
+.close-btn {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+	font-size: 20px;
+	color: #555;
+}
+
+.profileOverlay {
+	display: none;
+	position: absolute;
+	width: fit-content;
+	height: fit-content;
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.profileOverlay-content {
+	position: absolute;
+	transform: translate(165%, 3%);
+	background-color: #dbd3d3;
+	padding: 20px;
+	border-radius: 10px;
+	text-align: center;
+}
+
+
+/* Overlay End */
+
+.hrule {
+	border-bottom: 1px solid #dadde1;
+	margin: 20px 5px;
+}
+
+.loading-indicator {
+	display: none; /* Initially hide the loading indicator */
+	/* Add your styling for the loading indicator (e.g., position, size, color, etc.) */
+}
+
+.loader {
+	display: flex;
+	margin-top: 100%;
+	border: 5px solid #f3f3f3; 
+	border-top: 5px solid #3498db; 
+	border-right: 5px solid #ee4c4c; 
+	border-bottom: 5px solid #3498db;
+	border-left: 5px solid #ee4c4c; 
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.userIcon{
+	font-size:0.5em;  
+	float:left; margin:1em; 
+	transition: background-color 0.3s ease; 
+}
+
+.userIcon{
+	border-radius:4em; border:2px solid skyblue;
+	height:6em; width:6em;  
+	background:none;padding:0.1em;  
+}
+
+.userIcon::before{
+	content:" "; display:block;
+	height:2em; width:2em;
+	background:skyblue;
+	position:relative; left:2em;top:0.8em;
+	border-radius:2em;
+}
+.userIcon::after{
+	content:" "; display:block;
+	height:2em;width:4em;
+	background:skyblue;
+	position:relative; left:1em;top:1em;
+	border-radius:2em 2em 0 0;
+}
+
+.userIcon:hover{
+	background: #2691ab;
+}

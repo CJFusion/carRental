@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Available Cars</title>
+    <link rel="stylesheet" type="text/css" href="../assets/app.css">
+    <script type="text/javascript" src="../assets/app.js"></script>
+</head>
+<body class="homeBody">
+    <div class="navBar">
+        <div class="navBar_1"><h2>Rent a Car</h2></div>
+        <div class="userIcon" onclick="openProfileOverlay()"><span></span></div>
+        
+        <div id="profileOverlay" class="profileOverlay">
+            <div class="profileOverlay-content">
+                <h2>Choose account type</h2>
+                <button class="register-btn" onclick="selAccount('customer')">Customer</button>
+                <button class="register-btn" onclick="selAccount('rentalAgency')">Rental Agency</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="centeredBody">
+        <div id="carList">
+            <!-- Car details will be displayed here -->
+            <div class="loader"></div>
+        </div>
+    </div>
+
+
+
+    <script>
+
+
+
+        // Simulated car data (to be retrieved from the server)
+        var cars = [
+            { 
+                vehicleModel: "Car Model 1",
+                vehicleNumber: "ABC123",
+                seatingCapacity: 5,
+                rentPerDay: 50
+            },
+            {
+                vehicleModel: "Car Model 2",
+                vehicleNumber: "XYZ789",
+                seatingCapacity: 4,
+                rentPerDay: 60
+            }
+            // Add more car details as needed
+        ];
+
+        
+        // Function to display available cars
+        async function displayCars() {
+            document.getElementsByClassName('loader').display = 'flex';
+
+            await sleep(2000);
+            document.getElementsByClassName('loader').display = 'none';
+
+            var carListDiv = document.getElementById("carList");
+            carListDiv.innerHTML = ""; // Clear previous content
+
+            cars.forEach(function(car) {
+                var carDetails = document.createElement("div");
+                carDetails.innerHTML = `
+                    <p>Vehicle Model: ${car.vehicleModel}</p>
+                    <p>Vehicle Number: ${car.vehicleNumber}</p>
+                    <p>Seating Capacity: ${car.seatingCapacity}</p>
+                    <p>Rent Per Day: ${car.rentPerDay}</p>
+                    `;
+
+                if (isCustomerLoggedIn()) {
+                    var rentDropdown = document.createElement("select");
+                    rentDropdown.innerHTML = `
+                        <option value="1">1 day</option>
+                        <option value="2">2 days</option>
+                        <!-- Add more options as needed -->
+                    `;
+                    var startDateInput = document.createElement("input");
+                    startDateInput.type = "date";
+
+                    var rentButton = document.createElement("button");
+                    rentButton.textContent = "Rent Car";
+                    rentButton.addEventListener("click", function() {
+                        rentCar(car.vehicleModel); // Function to handle renting a car
+                    });
+
+                    carDetails.appendChild(rentDropdown);
+                    carDetails.appendChild(startDateInput);
+                    carDetails.appendChild(rentButton);
+                }
+
+                carListDiv.appendChild(carDetails);
+            });
+            
+        }
+
+        // Function to check if customer is logged in (dummy example)
+        function isCustomerLoggedIn() {
+            // Replace this with your actual logic to check if a customer is logged in
+            return true; // Return true if customer is logged in, false otherwise
+        }
+
+        // Function to handle renting a car
+        function rentCar(vehicleModel) {
+            if (!isCustomerLoggedIn()) {
+                window.location.href = 'login.html'; // Redirect to login page for non-logged-in users
+            } else {
+                // Handle the renting process for logged-in customers
+                // This could involve further interactions or backend operations
+                console.log(`Renting car: ${vehicleModel}`);
+            }
+        }
+
+        // Display available cars when the page loads
+        displayCars();
+    </script>
+</body>
+</html>

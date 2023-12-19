@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>User Registration</title>
+    <link rel="stylesheet" type="text/css" href="../assets/app.css"> <!-- Link to your CSS file -->
+</head>
+<body class="centeredBody">
+
+<div class="container" id="signUpContainer">
+    <h2>User Registration</h2>
+    <div class="hrule"></div>
+    <form action="../assets/dbHandling.php" method="post">
+        <!-- Account Credentials -->
+        <input type="hidden" name="user_type" value="customer">
+        
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+        <span id="passwordError" style="display: none; color: red;">Passwords do not match!</span><br><br>            
+        
+        <h2>Additional Information</h2>
+        <div class="hrule"></div>
+        <!-- Basic Information -->
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="full_name" name="full_name" required><br><br>
+        
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br><br>
+        
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select><br><br>
+        
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required><br><br>
+        
+        <!-- Address Information -->
+        <!-- <label for="streetAddress">Street Address:</label>
+        <input type="text" id="streetAddress" name="streetAddress" required><br><br>
+            -->
+        <!-- <label for="city">City:</label>
+        <input type="text" id="city" name="city" required><br><br> -->
+        
+        <label for="state">State/Province:</label>
+        <input type="text" id="address_state" name="address_state" required><br><br>
+<!--             
+        <label for="postalCode">Postal Code:</label>
+        <input type="text" id="postalCode" name="postalCode" required><br><br>
+        
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required><br><br>
+-->
+        <!-- Additional Information (Optional) -->
+        
+<!--             
+        <label for="profilePicture">Profile Picture:</label>
+        <input type="file" id="profilePicture" name="profilePicture"><br><br>
+            -->
+        <input type="hidden" name="submit_action" value="submit_users">
+        <input type="submit" class="blueBtn" value="Create account">
+    </form>
+</div>
+
+</body>
+</html>

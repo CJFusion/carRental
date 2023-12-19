@@ -1,0 +1,81 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    
+    <!--<meta name="author" content="Mr.X"> -->
+    <!--<meta name="Linkedin profile" content="WWW.linkedin.com/Mr.X_123" > -->
+
+    <!--<meta name="description " -->
+    <!--content="A better place to learn computer science"> -->
+    <!-- to explain about website in few words -->
+    
+    <title>Login Page</title>
+  
+  <link rel="stylesheet" type="text/css" href="assets/app.css">
+  
+  <script type="text/javascript" src="assets/app.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body class="centeredBody" id="loginBody">
+  <!-- Main Content -->
+  <div class="container">
+    <form id="loginForm">
+       <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <input type="submit" class="blueBtn" value="Login">   
+    </form>
+    <div class="hrule"></div>
+    <button class="greenBtn" onclick="openOverlay()">Create new account</button>
+  </div>
+
+  <!-- Overlay content -->
+  <div id="overlay" class="overlay">
+    <div class="overlay-content">
+      <span class="close-btn" onclick="closeOverlay()">&times;</span>
+      <h2>Choose account type</h2>
+      <button class="register-btn" onclick="selAccount('customer')">Customer</button>
+      <button class="register-btn" onclick="selAccount('rentalAgency')">Rental Agency</button>
+    </div>
+  </div>
+
+<script>
+  document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    var formData = new FormData(event.target);
+
+    $.ajax({
+      url: "assets/login.php",
+      method: "POST",
+    //   dataType: "json",
+      processData: false,
+        contentType: false,
+        data: formData,
+      success: function(response) {
+          
+        try {
+            data = JSON.parse(response);
+            console.table(data);
+        } 
+        catch (e) {
+            console.table(response);
+            console.error('Invalid JSON:', e);
+        }
+        
+        if (data.loginStatus === "Login successful") {
+          window.location.href = "home/rentCar.html";
+        } else {
+          console.log(data.loginStatus);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error("AJAX error:", status, error);
+      }
+    });
+  });
+</script>
+
+  
+</body>
+</html>
