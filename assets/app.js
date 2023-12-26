@@ -1,76 +1,73 @@
 function openOverlay() {
-    document.getElementById("overlay").style.display = "flex";
+	document.getElementById("overlay").style.display = "flex";
 }
 
 function closeOverlay() {
-    document.getElementById("overlay").style.display = "none";
+	document.getElementById("overlay").style.display = "none";
 }
 
+const passMatch = (event) => {
+	let property = 'none';
+	if (!(document.getElementById("password").value === document.getElementById("confirmPassword").value))
+		property = 'block';
+	document.getElementById("passwordError").style.display = property;
+
+	if (!event.submitter && event.submitter.type !== 'submit')
+		return;
+
+	if (property === 'none')
+		return true;
+
+	document.getElementById("confirmPassword").focus();
+	return false;
+}
+
+const onInput = (event, nregex) => event.target.value = event.target.value.replace(nregex, '');
+
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
-        
+
 
 function openProfileOverlay() {
-  if(document.getElementById("profileOverlay").style.display == "none")
-      document.getElementById("profileOverlay").style.display = "flex";
-  else
-      document.getElementById("profileOverlay").style.display = "none";
+	if (document.getElementById("profileOverlay").style.display == "none")
+		document.getElementById("profileOverlay").style.display = "flex";
+	else
+		document.getElementById("profileOverlay").style.display = "none";
 }
 
 function selAccount(accountType) {
-    if (accountType === 'customer') {
-      // redirectToRegistrationPage(accountType) 
-      window.location.href = 'signUp/registerCustomer.html';
-    } else if (accountType === 'rentalAgency') {
-      // redirectToRegistrationPage(accountType)
-      window.location.href = 'signUp/registerAgency.html';
-    }
-  // alert("Selected account type: " + accountType);
-  // closeOverlay(); // Close the overlay after selection (You can perform further actions here)
+	if (accountType === 'customer') {
+		// redirectToRegistrationPage(accountType) 
+		window.location.href = 'signUp/registerCustomer.html';
+	} else if (accountType === 'rentalAgency') {
+		// redirectToRegistrationPage(accountType)
+		window.location.href = 'signUp/registerAgency.html';
+	}
+	// alert("Selected account type: " + accountType);
+	// closeOverlay(); // Close the overlay after selection (You can perform further actions here)
 }
 
 
-
-
-
-document.getElementById("registrationForm").addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  var password = document.getElementById("password").value;
-  var confirmPassword = document.getElementById("confirmPassword").value;
-  var passwordError = document.getElementById("passwordError");
-
-  if (password !== confirmPassword) {
-      passwordError.style.display = "inline";
-  } else {
-      passwordError.style.display = "none";
-      // Here, you might proceed with form submission since passwords match
-      // For example: this.submit();
-  }
-});
-
-
-
 document.getElementById("searchForm").addEventListener("submit", function (event) {
-  event.preventDefault();
-  var searchValue = document.getElementById("searchInput").value;
-  // Perform AJAX call based on search criteria
-  // Update the UI with search results
+	event.preventDefault();
+	var searchValue = document.getElementById("searchInput").value;
+	// Perform AJAX call based on search criteria
+	// Update the UI with search results
 });
 
 
 
 // Function to fetch data using AJAX
 function fetchDataFromUsersTable() {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-          var usersData = JSON.parse(this.responseText);
-          // Process the retrieved data
-          // E.g., display data in HTML elements
-      }
-  };
-  xhr.open("GET", "getUsers.php", true);
-  xhr.send();
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+		if (this.readyState == 4 && this.status == 200) {
+			var usersData = JSON.parse(this.responseText);
+			// Process the retrieved data
+			// E.g., display data in HTML elements
+		}
+	};
+	xhr.open("GET", "getUsers.php", true);
+	xhr.send();
 }
 
 
