@@ -56,20 +56,30 @@
 			fetch('assets/login.php', {
 				method: 'POST',
 				body: formData,
-			}).then(response => {
-				if (!response.ok)
-					throw new Error('Network response was not ok.');
-				return response.json();
+			}).then(async response => {
+				let res = await response.text();
+				try {
+					res = JSON.parse(res);
+				} catch (error) {
+					throw new Error('\nError parsing JSON: ' + res);
+				}
+
+				if (!response.ok) {
+					if (response.status >= 400) {
+						document.getElementById("loginError").style.display = 'flex';
+						document.getElementById("loginError").textContent = res.message;
+					}
+					throw new Error("\n" + await res.error + "\n" + await res.message);
+				}
+
+				return res;
 			}).then(data => {
 				console.table(data);
-				console.log(data.loginStatus);
-				if (data.loginStatus === 'Login successful') {
+				if (data.message === 'Login successful')
 					window.location.href = 'home/rentCar.html';
-				} else {
-					document.getElementById("loginError").style.display = 'flex';
-					document.getElementById("loginError").textContent = data.loginStatus;
-				}
-			}).catch(error => { console.error('Fetch API error:', error); });
+			}).catch(error => {
+				console.error('Fetch API -', error);
+			});
 		};
 	</script>
 

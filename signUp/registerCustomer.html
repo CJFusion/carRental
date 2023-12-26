@@ -12,7 +12,7 @@
 	<div class="container" id="signUpContainer">
 		<h2>User Registration</h2>
 		<div class="hrule"></div>
-		<form action="../assets/dbHandling.php" method="post" onsubmit="return passMatch(event)">
+		<form onsubmit="return passMatch(event)">
 			<!-- Account Credentials -->
 			<input type="hidden" name="user_type" value="customer">
 
@@ -35,7 +35,7 @@
 			<h2>Additional Information</h2>
 			<div class="hrule"></div>
 			<!-- Basic Information -->
-			<label for="fullName">Full Name:</label>
+			<label for="full_name">Full Name:</label>
 			<input type="text" id="full_name" name="full_name" oninput="onInput(event, /[^a-zA-Z ]/g)" required><br><br>
 
 			<label for="dob">Date of Birth:</label>
@@ -59,7 +59,7 @@
 			<!-- <label for="city">City:</label>
         <input type="text" id="city" name="city" required><br><br> -->
 
-			<label for="state">State/Province:</label>
+			<label for="address_state">State/Province:</label>
 			<input type="text" id="address_state" name="address_state" oninput="onInput(event, /[^a-zA-Z]/g)"
 				required><br><br>
 			<!--             
@@ -75,6 +75,9 @@
         <label for="profilePicture">Profile Picture:</label>
         <input type="file" id="profilePicture" name="profilePicture"><br><br>
             -->
+
+			<div id="loginError">Login failed</div>
+
 			<input type="hidden" name="submit_action" value="submit_users">
 			<input type="submit" class="blueBtn" value="Create account">
 		</form>
@@ -88,20 +91,79 @@
 				property = 'block';
 			document.getElementById("passwordError").style.display = property;
 
-			if (!event.submitter && event.submitter.type !== 'submit')
+			if (!event.submitter)
 				return;
 
-			if (property === 'none')
-				return true;
+			if (property !== 'none') {
+				document.getElementById("confirmPassword").focus();
+				return false;
+			}
 
-			document.getElementById("confirmPassword").focus();
-			return false;
+			createAccAuth(event);
+			return true;
+		}
+
+		const createAccAuth = (event) => {
+			event.preventDefault();
+
+			let formData = new FormData(event.target);
+
+			fetch('../assets/dbHandling.php', {
+				method: 'POST',
+				body: formData,
+			}).then(async response => {
+				let res = await response.text();
+				try {
+					res = JSON.parse(res);
+				} catch (error) {
+					throw new Error('\nError parsing JSON: ' + res);
+				}
+
+				if (!response.ok) {
+					if (response.status >= 400) {
+						document.getElementById("loginError").style.display = 'flex';
+						document.getElementById("loginError").textContent = res.message;
+					}
+					throw new Error("\n" + await res.error + "\n" + await res.message);
+				}
+
+				return res;
+			}).then(data => {
+				console.table(data);
+				if (data.message === 'New user: "' + formData.get('username') + '" recorded into Users table successfully')
+					window.location.href = '../home/rentCar.html';
+			}).catch(error => {
+				console.error('Fetch API -', error);
+			});
 		}
 
 		const onInput = (event, nregex) => event.target.value = event.target.value.replace(nregex, '');
 
 	</script>
 
+	<style>
+		#loginError {
+			display: none;
+			color: rgb(217, 48, 37);
+			align-self: center;
+			font-size: 12px;
+			transform: translateY(-10px);
+		}
+
+		#loginError::before {
+			content: '!';
+			color: white;
+			padding: 2px;
+			font-family: Carlito;
+			font-size: 0.8em;
+			margin-right: 5px;
+			width: 1.2em;
+			height: 1.2em;
+			border-radius: 50%;
+			background-color: rgb(217, 48, 37);
+			text-align: center;
+		}
+	</style>
 </body>
 
 </html>

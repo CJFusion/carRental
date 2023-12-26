@@ -19,14 +19,5 @@ function executePreparedStatement($conn, $sql, $types, ...$params) {
     $stmt->execute();
 
     return $stmt;
-    
-    
-    if ($stmt->affected_rows > 0) {
-        $data["stmtPreparation"] = "Successful";
-        return $data;
-    } else {
-        $data["stmtPreparation"] = "Error executing statement: " . $stmt->error;
-        return false;
-    }
 }
 ?>

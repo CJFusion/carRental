@@ -1,12 +1,22 @@
+
+body {
+    margin: 0;
+	width: 100%;
+    height: 100%;
+	/* padding: 20px; */
+	background-color: #f4f4f4;
+}
+
 .centeredBody {
 	font-family: Helvetica, Arial, sans-serif;
-	margin: 0 auto;
+	/* margin: 0 auto; */
 	padding: 20px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
-	background-color: #f4f4f4;
+	/* width: 100vw;
+	height: 100vh; */
+	
 }
 
 .homeBody {
@@ -17,11 +27,10 @@
 	justify-content: center;
 	align-items: center;
 	/* height: 100%; */
-	background-color: #f4f4f4;
 }
 
 #loginBody {
-	height: 80vh !important;
+	height: 90vh !important;
 }
 
 .navBar {
@@ -40,6 +49,7 @@
 
 
 .container {
+	display: block;
 	background-color: #fff;
 	padding: 20px;
 	border-radius: 8px;
@@ -151,15 +161,16 @@ button.register-btn:hover,
 
 .profileOverlay {
 	display: none;
-	position: absolute;
-	width: fit-content;
+	position: relative;
+	top: 55%;
+	right: 200%;
+	width: 100px;
 	height: fit-content;
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .profileOverlay-content {
 	position: absolute;
-	transform: translate(165%, 3%);
 	background-color: #dbd3d3;
 	padding: 20px;
 	border-radius: 10px;
@@ -174,14 +185,7 @@ button.register-btn:hover,
 	margin-bottom: 10px;
 }
 
-.loading-indicator {
-	display: none;
-	/* Initially hide the loading indicator */
-	/* Add your styling for the loading indicator (e.g., position, size, color, etc.) */
-}
-
-.loader {
-	display: flex;
+#loader {
 	margin-top: 100%;
 	border: 5px solid #f3f3f3;
 	border-top: 5px solid #3498db;
@@ -208,20 +212,17 @@ button.register-btn:hover,
 	font-size: 0.5em;
 	float: left;
 	margin: 1em;
-	transition: background-color 0.3s ease;
-}
-
-.userIcon {
 	border-radius: 4em;
 	border: 2px solid skyblue;
 	height: 6em;
 	width: 6em;
 	background: none;
 	padding: 0.1em;
+	transition: background-color 0.3s ease;
 }
 
 .userIcon::before {
-	content: " ";
+	content: "";
 	display: block;
 	height: 2em;
 	width: 2em;
@@ -233,7 +234,7 @@ button.register-btn:hover,
 }
 
 .userIcon::after {
-	content: " ";
+	content: "";
 	display: block;
 	height: 2em;
 	width: 4em;
