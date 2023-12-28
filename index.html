@@ -20,30 +20,30 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
-<body class="centeredBody" id="loginBody">
+<body class="flexCentered maxViewPort greyBg">
 	<!-- Main Content -->
 	<div class="container">
 		<form id="loginForm" onsubmit="return loginAuth(event)">
 			<input type="text" name="username" placeholder="Username" required>
 			<input type="password" name="password" placeholder="Password" required>
 			<div id="loginError">Login failed</div>
-
-
-
-
 			<input type="submit" class="blueBtn" value="Login">
 		</form>
-		<div class="hrule"></div>
-		<button class="greenBtn" onclick="openOverlay()">Create new account</button>
+		<div class="hrule vertMargins"></div>
+		<div class="flexCentered">
+			<button class="greenBtn" onclick="openOverlay()">Create new account</button>
+		</div>
 	</div>
 
 	<!-- Overlay content -->
 	<div id="overlay" class="overlay">
-		<div class="overlay-content">
-			<span class="close-btn" onclick="closeOverlay()">&times;</span>
-			<h2>Choose account type</h2>
-			<button class="register-btn" onclick="selAccount('customer')">Customer</button>
-			<button class="register-btn" onclick="selAccount('rentalAgency')">Rental Agency</button>
+		<div class="overlayContent">
+			<span class="closeBtn" onclick="closeOverlay()">&times;</span>
+			<h3>Choose account type</h3>
+			<span class="flexCentered">
+				<button class="registerBtn" onclick="selAccount('customer')">Customer</button>
+				<button class="registerBtn" onclick="selAccount('rentalAgency')">Rental Agency</button>
+			</span>
 		</div>
 	</div>
 

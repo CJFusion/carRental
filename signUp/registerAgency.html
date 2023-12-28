@@ -7,57 +7,50 @@
 	<link rel="stylesheet" type="text/css" href="../assets/app.css"> <!-- Link to your CSS file -->
 </head>
 
-<body class="centeredBody">
+<body class="flexCentered maxViewPort greyBg">
 
 	<div class="container" id="signUpContainer">
 		<h2>Agency Registration</h2>
-		<div class="hrule"></div>
+		<div class="hrule vertMargins"></div>
 		<form onsubmit="return passMatch(event)">
 			<!-- Account Credentials -->
 			<input type="hidden" name="user_type" value="agency">
 
 			<label for="username">Username:</label>
-			<input type="text" id="username" name="username" oninput="onInput(event, /[^a-zA-Z0-9]/g)" required><br><br>
+			<input type="text" id="username" name="username" oninput="onInput(event, /[^a-zA-Z0-9]/g)" required>
 
 			<label for="email">Agency Email Address:</label>
-			<input type="email" id="email" name="email" required><br><br>
+			<input type="email" id="email" name="email" required>
 
 			<label for="password">Password:</label>
-			<input type="password" id="password" name="password" required><br><br>
+			<input type="password" id="password" name="password" required>
 
 			<label for="confirmPassword">Confirm Password:</label>
-			<input type="password" id="confirmPassword" name="confirmPassword" oninput="passMatch(event)"
-				required><br><br>
-			<span id="passwordError"
-				style="display: none; color: #ff0000ad; align-self: center; font-size: 12px; font-weight: bold;">Passwords
-				do not match!</span><br><br>
+			<input type="password" id="confirmPassword" name="confirmPassword" oninput="passMatch(event)" required>
+			<span id="passwordError">Passwords
+				do not match!</span>
 
 			<h2>Additional Information</h2>
-			<div class="hrule"></div>
-
+			<div class="hrule vertMargins"></div>
 
 			<!-- Agency Information -->
 			<label for="agency_name">Agency Name:</label>
-			<input type="text" id="agency_name" name="agency_name" oninput="onInput(event, /[^a-zA-Z. ]/g)"
-				required><br><br>
+			<input type="text" id="agency_name" name="agency_name" oninput="onInput(event, /[^a-zA-Z. ]/g)" required>
 
 			<label for="full_name">Agency Contact Person Name:</label>
-			<input type="text" id="full_name" name="full_name" oninput="onInput(event, /[^a-zA-Z ]/g)" required><br><br>
-
-
+			<input type="text" id="full_name" name="full_name" oninput="onInput(event, /[^a-zA-Z ]/g)" required>
 
 			<label for="phone">Agency Contact Phone Number:</label>
 			<input type="tel" id="phone" name="phone" maxlength="10" title="Enter 10 digit phone number"
-				pattern="[0-9]{10,10}" oninput="onInput(event, /[^0-9]/g)" required><br><br>
+				pattern="[0-9]{10,10}" oninput="onInput(event, /[^0-9]/g)" required>
 
 			<label for="address_state">Agency State/Province:</label>
-			<input type="text" id="address_state" name="address_state" oninput="onInput(event, /[^a-zA-Z]/g)"
-				required><br><br>
+			<input type="text" id="address_state" name="address_state" oninput="onInput(event, /[^a-zA-Z]/g)" required>
 
 			<div id="loginError">Login failed</div>
 
 			<input type="hidden" name="submit_action" value="submit_users">
-			<input type="submit" value="Create account">
+			<input type="submit" class="blueBtn" value="Create account">
 		</form>
 	</div>
 
@@ -66,7 +59,7 @@
 		const passMatch = (event) => {
 			let property = 'none';
 			if (!(document.getElementById("password").value === document.getElementById("confirmPassword").value))
-				property = 'block';
+				property = 'flex';
 			document.getElementById("passwordError").style.display = property;
 
 			if (!event.submitter)
@@ -120,7 +113,8 @@
 	</script>
 
 	<style>
-		#loginError {
+		#loginError,
+		#passwordError {
 			display: none;
 			color: rgb(217, 48, 37);
 			align-self: center;
@@ -128,7 +122,7 @@
 			transform: translateY(-10px);
 		}
 
-		#loginError::before {
+		:is(#loginError, #passwordError)::before {
 			content: '!';
 			color: white;
 			padding: 2px;

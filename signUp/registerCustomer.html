@@ -7,73 +7,70 @@
 	<link rel="stylesheet" type="text/css" href="../assets/app.css"> <!-- Link to your CSS file -->
 </head>
 
-<body class="centeredBody">
+<body class="flexCentered maxViewPort greyBg">
 
 	<div class="container" id="signUpContainer">
 		<h2>User Registration</h2>
-		<div class="hrule"></div>
+		<div class="hrule vertMargins"></div>
 		<form onsubmit="return passMatch(event)">
 			<!-- Account Credentials -->
 			<input type="hidden" name="user_type" value="customer">
 
 			<label for="username">Username:</label>
-			<input type="text" id="username" name="username" oninput="onInput(event, /[^a-zA-Z0-9]/g)" required><br><br>
+			<input type="text" id="username" name="username" oninput="onInput(event, /[^a-zA-Z0-9]/g)" required>
 
 			<label for="email">Email Address:</label>
-			<input type="email" id="email" name="email" required><br><br>
+			<input type="email" id="email" name="email" required>
 
 			<label for="password">Password:</label>
-			<input type="password" id="password" name="password" oninput="passMatch(event)" required><br><br>
+			<input type="password" id="password" name="password" oninput="passMatch(event)" required>
 
 			<label for="confirmPassword">Confirm Password:</label>
-			<input type="password" id="confirmPassword" name="confirmPassword" oninput="passMatch(event)"
-				required><br><br>
-			<span id="passwordError"
-				style="display: none; color: #ff0000ad; align-self: center; font-size: 12px; font-weight: bold;">Passwords
-				do not match!</span><br><br>
+			<input type="password" id="confirmPassword" name="confirmPassword" oninput="passMatch(event)" required>
+			<span id="passwordError">Passwords
+				do not match!</span>
 
 			<h2>Additional Information</h2>
-			<div class="hrule"></div>
+			<div class="hrule vertMargins"></div>
 			<!-- Basic Information -->
 			<label for="full_name">Full Name:</label>
-			<input type="text" id="full_name" name="full_name" oninput="onInput(event, /[^a-zA-Z ]/g)" required><br><br>
+			<input type="text" id="full_name" name="full_name" oninput="onInput(event, /[^a-zA-Z ]/g)" required>
 
 			<label for="dob">Date of Birth:</label>
-			<input type="date" id="dob" name="dob" min="1900-01-01" max="2023-01-01" required><br><br>
+			<input type="date" id="dob" name="dob" min="1900-01-01" max="2023-01-01" required>
 
 			<label for="gender">Gender:</label>
 			<select id="gender" name="gender">
 				<option value="male">Male</option>
 				<option value="female">Female</option>
 				<option value="other">Other</option>
-			</select><br><br>
+			</select>
 
 			<label for="phone">Phone Number:</label>
 			<input type="tel" id="phone" name="phone" maxlength="10" title="Enter 10 digit phone number"
-				pattern="[0-9]{10,10}" oninput="onInput(event, /[^0-9]/g)" required><br><br>
+				pattern="[0-9]{10,10}" oninput="onInput(event, /[^0-9]/g)" required>
 
 			<!-- Address Information -->
 			<!-- <label for="streetAddress">Street Address:</label>
-        <input type="text" id="streetAddress" name="streetAddress" required><br><br>
+        <input type="text" id="streetAddress" name="streetAddress" required>
             -->
 			<!-- <label for="city">City:</label>
-        <input type="text" id="city" name="city" required><br><br> -->
+        <input type="text" id="city" name="city" required> -->
 
 			<label for="address_state">State/Province:</label>
-			<input type="text" id="address_state" name="address_state" oninput="onInput(event, /[^a-zA-Z]/g)"
-				required><br><br>
+			<input type="text" id="address_state" name="address_state" oninput="onInput(event, /[^a-zA-Z]/g)" required>
 			<!--             
         <label for="postalCode">Postal Code:</label>
-        <input type="text" id="postalCode" name="postalCode" required><br><br>
+        <input type="text" id="postalCode" name="postalCode" required>
         
         <label for="country">Country:</label>
-        <input type="text" id="country" name="country" required><br><br>
+        <input type="text" id="country" name="country" required>
 -->
 			<!-- Additional Information (Optional) -->
 
 			<!--             
         <label for="profilePicture">Profile Picture:</label>
-        <input type="file" id="profilePicture" name="profilePicture"><br><br>
+        <input type="file" id="profilePicture" name="profilePicture">
             -->
 
 			<div id="loginError">Login failed</div>
@@ -88,7 +85,7 @@
 		const passMatch = (event) => {
 			let property = 'none';
 			if (!(document.getElementById("password").value === document.getElementById("confirmPassword").value))
-				property = 'block';
+				property = 'flex';
 			document.getElementById("passwordError").style.display = property;
 
 			if (!event.submitter)
@@ -142,7 +139,8 @@
 	</script>
 
 	<style>
-		#loginError {
+		#loginError,
+		#passwordError {
 			display: none;
 			color: rgb(217, 48, 37);
 			align-self: center;
@@ -150,7 +148,7 @@
 			transform: translateY(-10px);
 		}
 
-		#loginError::before {
+		:is(#loginError, #passwordError)::before {
 			content: '!';
 			color: white;
 			padding: 2px;

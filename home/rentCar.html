@@ -8,26 +8,28 @@
 	<script type="text/javascript" src="../assets/app.js"></script>
 </head>
 
-<body class="homeBody">
-	<div class="navBar">
-		<div class="navBar_1">
+<body class="greyBg">
+	<nav class="navBar">
+		<div class="navBar_1 flexItem">
 			<h2>Rent a Car</h2>
 		</div>
-		<span>
-			<div id="rentPage_userIcon" role="button" class="userIcon">
-				<div id="profileOverlay" class="profileOverlay">
-					<div class="profileOverlay-content">
-						<h2>Choose account type</h2>
-						<button class="register-btn" onclick="selAccount('customer')">Customer</button>
-						<button class="register-btn" onclick="selAccount('rentalAgency')">Rental Agency</button>
-					</div>
+		<div class="flexItem">
+			<div id="rentPage_userIcon" role="button" class="userIcon"></div>
+			<div id="profileOverlay" class="profileOverlay">
+
+				<div class="profileOverlayContent">
+					<h3>Choose account type</h3>
+					<span class="flexCentereds">
+						<button class="registerBtn" onclick="selAccount('customer')">Customer</button>
+						<button class="registerBtn" onclick="selAccount('rentalAgency')">Rental Agency</button>
+					</span>
 				</div>
+
 			</div>
-		</span>
+		</div>
+	</nav>
 
-	</div>
-
-	<div class="centeredBody">
+	<div class="flexCentered">
 		<div id="carList">
 			<!-- Car details will be displayed here -->
 			<div id="loader"></div>
@@ -37,14 +39,24 @@
 
 
 	<style>
-		#rentPage_userIcon:hover>#profileOverlay {
-			display: block;
+		#rentPage_userIcon:hover+#profileOverlay,
+		#profileOverlay:hover {
+			display: flex;
+			animation: profileOverlayPop .3s ease-in-out forwards;
+		}
+
+		@keyframes profileOverlayPop {
+			0% {
+				opacity: 0;
+			}
+
+			100% {
+				opacity: 1;
+			}
 		}
 	</style>
 
 	<script>
-
-
 		// Simulated car data (to be retrieved from the server)
 		var cars = [
 			{
