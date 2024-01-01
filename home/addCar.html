@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Add New Cars</title>
+	<!-- Add your CSS stylesheets or links here -->
+</head>
+
+<body>
+	<nav class="navBar flexCentered">
+		<div class="flexItem">
+			<h2>Add New Cars</h2>
+		</div>
+	</nav>
+
+	<div class="grid">
+		<form id="addCar" onsubmit="return addCar(event)">
+			<label for="model">Model:</label>
+			<input type="text" id="model" name="model" oninput="validateInput(event, /[^a-zA-Z0-9- ]/g)" required><br>
+
+			<label for="licenseNumber">License Number:</label>
+			<input type="text" id="licenseNumber" name="licenseNumber" oninput="validateInput(event, /[^a-zA-Z0-9 ]/g)" required><br>
+
+			<label for="capacity">Seating Capacity:</label>
+			<input type="number" id="capacity" name="capacity" min="1" max="99" oninput="validateInput(event, /[^0-9]/g)" required><br>
+
+			<label for="rentPerDay">Rent Per Day:</label>
+			<input type="number" id="rentPerDay" name="rentPerDay" min="1" oninput="validateInput(event, /[^0-9]/g)" required><br>
+
+			<div id="registerError"></div>
+
+			<input type="hidden" name="submit_action" value="submit_cars">
+			<input type="submit" value="Add Car">
+		</form>
+	</div>
+	<style>
+		br {
+			color: red;
+			/* display: none; */
+		}
+
+		input[type=number]::-webkit-inner-spin-button,
+		input[type=number]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			margin: 0;
+		}
+
+		input[type=number] {
+			-moz-appearance: textfield;
+		}
+	</style>
+
+	<script>
+
+		const addCar = (event) => {
+			event.preventDefault();
+
+			let formData = new FormData(event.target);
+
+			fetch('../assets/dbHandling.php', {
+				method: 'POST',
+				body: formData,
+			}).then(async response => {
+				let res = await response.text();
+				try {
+					res = JSON.parse(res);
+				} catch (error) {
+					throw new Error('\nError parsing JSON: ' + res);
+				}
+
+				if (!response.ok) {
+					if (response.status >= 400) {
+						document.getElementById("registerError").style.display = 'flex';
+						document.getElementById("registerError").textContent = res.message;
+					}
+					throw new Error("\n" + res.error + "\n" + res.message);
+				}
+
+				return res;
+			}).then(data => {
+				console.table(data);
+				if (data.message === 'New car: "' + formData.get('licenseNumber') + '" recorded into Cars table successfully')
+					window.location.href = window.location.origin + '/home/rentCar.html'
+			}).catch(error => {
+				console.error('Fetch API -', error);
+			});
+		}
+		const validateInput = (event, nregex) => {event.target.value = event.target.value.replace(nregex, '');
+		
+		if(event.target.name === 'licenseNumber')
+		event.target.value = event.target.value.replace(/[a-z]/g, (match) => match.toUpperCase())};
+
+	</script>
+</body>
+
+</html>

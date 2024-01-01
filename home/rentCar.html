@@ -3,25 +3,26 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Available Cars</title>
 	<link rel="stylesheet" type="text/css" href="../assets/app.css">
 	<script type="text/javascript" src="../assets/app.js"></script>
 </head>
 
 <body class="greyBg">
-	<nav class="navBar">
-		<div class="navBar_1 flexItem">
+	<nav class="navBar flexCentered">
+		<div class="flexItem">
 			<h2>Rent a Car</h2>
 		</div>
-		<div class="flexItem">
+		<div class="flexItem occupyMin">
 			<div id="rentPage_userIcon" role="button" class="userIcon"></div>
 			<div id="profileOverlay" class="profileOverlay">
 
 				<div class="profileOverlayContent">
-					<h3>Choose account type</h3>
+					<h3>...</h3>
 					<span class="flexCentereds">
-						<button class="registerBtn" onclick="selAccount('customer')">Customer</button>
-						<button class="registerBtn" onclick="selAccount('rentalAgency')">Rental Agency</button>
+						<button class="registerBtn" onclick="profileOpts('addCar.html')">Add Cars</button>
+						<button class="registerBtn" onclick="profileOpts('viewRentals.html')">View Rentals</button>
 					</span>
 				</div>
 
@@ -29,18 +30,47 @@
 		</div>
 	</nav>
 
-	<div class="flexCentered">
-		<div id="carList">
-			<!-- Car details will be displayed here -->
-			<div id="loader"></div>
-		</div>
+	<div id="carList" class="grid margin">
+		<!-- Car details will be displayed here -->
+		<div id="loader"></div>
 	</div>
 
 
 
 	<style>
-		#rentPage_userIcon:hover+#profileOverlay,
-		#profileOverlay:hover {
+		.margin {
+			margin: 16px;
+		}
+
+		.grid {
+			display: grid;
+			justify-items: center;
+			grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+			/* grid-template-rows: repeat(5, 500px); */
+			gap: 20px;
+		}
+
+		.gridItem {
+			display: grid;
+			grid-template-rows: repeat(5, minmax(2rem, 3rem));
+			width: 265px;
+			height: 210px;
+			border: 1px solid;
+			padding: 8px;
+			margin: 8px;
+		}
+
+		.gridItem> :is(p, form) {
+			display: inline;
+			grid-template-rows: subgrid;
+		}
+
+		.gridItem>form>* {
+			margin: 2px;
+		}
+
+		.userIcon:hover~.profileOverlay,
+		.profileOverlay:hover {
 			display: flex;
 			animation: profileOverlayPop .3s ease-in-out forwards;
 		}
@@ -57,67 +87,205 @@
 	</style>
 
 	<script>
+
+		const profileOpts = (htmlPage) => {
+			if (htmlPage === 'addCar.html')
+				window.location.href = `./${htmlPage}`;
+			window.location.href = `./${htmlPage}`;
+		}
 		// Simulated car data (to be retrieved from the server)
+
+		// car_id 	agency_id 	model 	license_number 	capacity 	rent_per_day 	
 		var cars = [
 			{
 				vehicleModel: "Car Model 1",
 				vehicleNumber: "ABC123",
-				seatingCapacity: 5,
+				capacity: 5,
 				rentPerDay: 50
 			},
 			{
 				vehicleModel: "Car Model 2",
 				vehicleNumber: "XYZ789",
-				seatingCapacity: 4,
+				capacity: 4,
 				rentPerDay: 60
 			}
 			// Add more car details as needed
 		];
 
 
+		const getCarList = () => {
+
+			//Filler Database Fetched Data
+			// return { "agencyId": { "2": { "carId": { "3": { "model": "Tesla Model S", "license_number": "MH 01 AB 1234", "capacity": "5", "rent_per_day": "600.00" }, "4": { "model": "Porsche Cayenne", "license_number": "DL 02 CD 5678", "capacity": "4", "rent_per_day": "550.00" }, "5": { "model": "Mercedes-Benz GLE", "license_number": "KA 05 EF 9012", "capacity": "5", "rent_per_day": "700.00" }, "6": { "model": "BMW X5", "license_number": "TN 06 GH 3456", "capacity": "4", "rent_per_day": "620.00" }, "7": { "model": "Audi Q7", "license_number": "UP 07 IJ 7890", "capacity": "5", "rent_per_day": "580.00" } } }, "11": { "carId": { "8": { "model": "Land Rover Range Rover", "license_number": "GJ 08 KL 1234", "capacity": "4", "rent_per_day": "800.00" }, "9": { "model": "Bentley Bentayga", "license_number": "MH 09 MN 5678", "capacity": "4", "rent_per_day": "900.00" }, "10": { "model": "Rolls-Royce Cullinan", "license_number": "UP 10 OP 9012", "capacity": "4", "rent_per_day": "850.00" }, "11": { "model": "Ferrari Portofino", "license_number": "DL 11 QR 3456", "capacity": "4", "rent_per_day": "1000.00" }, "12": { "model": "Lamborghini Urus", "license_number": "TN 12 ST 7890", "capacity": "4", "rent_per_day": "950.00" } } }, "13": { "carId": { "13": { "model": "Maserati Levante", "license_number": "KA 13 UV 1234", "capacity": "5", "rent_per_day": "750.00" }, "14": { "model": "Aston Martin DBX", "license_number": "MH 14 WX 5678", "capacity": "4", "rent_per_day": "700.00" }, "15": { "model": "McLaren GT", "license_number": "GJ 15 YZ 9012", "capacity": "5", "rent_per_day": "820.00" }, "16": { "model": "Bugatti Chiron", "license_number": "DL 16 AB 3456", "capacity": "5", "rent_per_day": "1500.00" }, "17": { "model": "Porsche 911 Turbo", "license_number": "TN 17 CD 7890", "capacity": "5", "rent_per_day": "1200.00" } } } } }
+
+
+
+
+			return fetch('../assets/dbHandling.php/Cars/', {
+				method: 'GET',
+			}).then(async response => {
+				let res = await response.text();
+				try {
+					res = JSON.parse(res);
+				} catch (error) {
+					throw new Error('\nError parsing JSON: ' + res);
+				}
+
+				if (!response.ok) {
+					if (response.status >= 400) {
+						document.getElementById("registerError").style.display = 'flex';
+						document.getElementById("registerError").textContent = res.message;
+					}
+					throw new Error("\n" + res.error + "\n" + res.message);
+				}
+
+				return res;
+			}).then(data => {
+				console.table(data);
+				if (data.message === 'Car list fetched successfully.')
+					return data.availableCars;
+			}).catch(error => {
+				console.error('Fetch API -', error);
+				return false;
+			});
+		}
+
+		const addBooking = (event) => {
+			let formData = new FormData(event.target);
+
+			fetch('../assets/dbHandling.php/Bookings/', {
+				method: 'POST',
+				body: formData,
+			}).then(async response => {
+				let res = await response.text();
+				try {
+					res = JSON.parse(res);
+				} catch (error) {
+					throw new Error('\nError parsing JSON: ' + res);
+				}
+
+				if (!response.ok) {
+					if (response.status >= 400) {
+						document.getElementById("registerError").style.display = 'flex';
+						document.getElementById("registerError").textContent = res.message;
+					}
+					throw new Error("\n" + res.error + "\n" + res.message);
+				}
+
+				return res;
+			}).then(data => {
+				console.table(data);
+				if (data.message === 'New booking on carId: "' + formData.get('carId') + '" recorded into Bookings table successfully')
+					alert(`Booked car successfully.`);
+				// window.location.href = '../home/rentCar.html';
+			}).catch(error => {
+				console.error('Fetch API -', error);
+			});
+		}
+
 		// Function to display available cars
 		async function displayCars() {
 
 			document.getElementById('loader').style.display = 'flex';
 
-			await sleep(2000);
+			let getList = await getCarList();
+
+			if (!getList)
+				return;
 
 			document.getElementById('loader').style.display = 'none';
 
 			var carListDiv = document.getElementById("carList");
-			// carListDiv.innerHTML = ""; // Clear previous content
+			carListDiv.innerHTML = ""; // Clear previous content
 
-			cars.forEach(function (car) {
-				var carDetails = document.createElement("div");
-				carDetails.innerHTML = `
-                    <p>Vehicle Model: ${car.vehicleModel}</p>
-                    <p>Vehicle Number: ${car.vehicleNumber}</p>
-                    <p>Seating Capacity: ${car.seatingCapacity}</p>
-                    <p>Rent Per Day: ${car.rentPerDay}</p>
-                    `;
+			Object.values(getList.agencyId).forEach(function (agency) {
+				let car = agency.carId;
+				for (let key in car) {
 
-				if (isCustomerLoggedIn()) {
-					var rentDropdown = document.createElement("select");
-					rentDropdown.innerHTML = `
-                        <option value="1">1 day</option>
-                        <option value="2">2 days</option>
-                        <!-- Add more options as needed -->
-                    `;
-					var startDateInput = document.createElement("input");
-					startDateInput.type = "date";
+					var carDetails = document.createElement("div");
+					carDetails.classList.add("gridItem");
 
-					var rentButton = document.createElement("button");
-					rentButton.textContent = "Rent Car";
-					rentButton.addEventListener("click", function () {
-						rentCar(car.vehicleModel); // Function to handle renting a car
-					});
+					carDetails.innerHTML = `
+						<h3>${car[key].model}</h3>
+						<p>License number: ${car[key].license_number}</p>
+						<p>Seating capacity: ${car[key].capacity}</p>
+						<p>Rent/day: ${car[key].rent_per_day}</p>
+					`;
 
-					carDetails.appendChild(rentDropdown);
-					carDetails.appendChild(startDateInput);
-					carDetails.appendChild(rentButton);
+					if (isCustomerLoggedIn()) {
+						let bookForm = document.createElement("form");
+						bookForm.setAttribute('action', 'addBooking(event)');
+						bookForm.innerHTML = `
+							<input type="number" min="1" max="31" name="daysBooked" title="1 month booking max" required>
+
+							<!--
+							<select name="daysBooked" required>
+								<option value="1">1 day</option>
+								<option value="2">2 days</option>
+								<!-- Add more options as needed --><!--
+							</select>
+							-->
+
+							<input type="date" name="bookDate" required>
+
+							<input type="hidden" name="userId" value = "1">
+							<input type="hidden" name="carId" value = "${key}">
+							<input type="hidden" name="submit_action" value = "submit_bookings">
+							<input type="submit" value="Rent">
+						`;
+						//TODO: Add logic for retrieving and submitiing user_id 
+						carDetails.appendChild(bookForm);
+					}
+
+					// var carDetailsWrapper = document.createElement("div");
+					// carDetailsWrapper.classList.add("gridItem");
+					// carDetailsWrapper.appendChild(carDetails);
+
+					carListDiv.appendChild(carDetails);
 				}
 
-				carListDiv.appendChild(carDetails);
+
+
+
+				// Object.values(agency.carId).forEach(function (car) {
+
+				// 	var carDetails = document.createElement("div");
+				// 	carDetails.classList.add("gridItem");
+
+				// 	carDetails.innerHTML = `
+				//     <h3>${car.model}</h3>
+				//     <p>License number: ${car.license_number}</p>
+				//     <p>Seating capacity: ${car.capacity}</p>
+				//     <p>Rent/day: ${car.rent_per_day}</p>
+				// `;
+
+				// 	if (isCustomerLoggedIn()) {
+				// 		let bookForm = document.createElement("form");
+				// 		bookForm.setAttribute('action', 'addBooking(event)');
+				// 		bookForm.innerHTML = `
+				// 		<input type="number" min="1" max="31" name="daysBooked" title="1 month booking max" required>
+
+				// 		<!--
+				// 		<select name="daysBooked" required>
+				//         	<option value="1">1 day</option>
+				//         	<option value="2">2 days</option>
+				//         	<!-- Add more options as needed --><!--
+				//     	</select>
+				// 		-->
+
+				// 		<input type="text" name="carId" value = "${Object.keys(agency.carId)[0]}">
+				// 		<input type="date" name="bookDate" required>
+				// 		<input type="submit" value="Rent">
+				// 		`;
+				// 		carDetails.appendChild(bookForm);
+				// 	}
+
+				// 	// var carDetailsWrapper = document.createElement("div");
+				// 	// carDetailsWrapper.classList.add("gridItem");
+				// 	// carDetailsWrapper.appendChild(carDetails);
+
+				// 	carListDiv.appendChild(carDetails);
+				// })
 			});
 
 		}

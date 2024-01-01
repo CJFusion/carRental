@@ -1,5 +1,6 @@
 :root {
 	--pixelBorder: 1px solid #dadde1;
+	--userIconSize: calc(0.4 * 1rem);
 }
 
 :is(body, html, h1, h2, h3, h4, h5, h6) {
@@ -41,8 +42,8 @@ button {
 }
 
 .maxViewPort {
-	min-width: 100vw;
-	min-height: 100vh;
+	min-width: min(100svw, 100vw);
+	min-height: min(100svh, 100vh);
 }
 
 .greyBg {
@@ -51,17 +52,19 @@ button {
 
 .navBar {
 	padding: 0%;
-	display: flex;
-	position: relative;
-	align-items: center;
-	justify-content: center;
 	background-color: #788575;
+	box-shadow: 0 0 0.5rem rgba(0, 0, 0, 1);
 	z-index: 1;
 }
 
-.navBar .flexItem:first-child {
+.flexItem:not(.occupyMin) {
 	flex: 1 1 auto;
 }
+
+/* 
+.flexItem:is(.occupyMin) {
+	flex: 1%;
+} */
 
 .flexItem+.flexItem {
 	border-left: var(--pixelBorder);
@@ -77,8 +80,8 @@ button {
 	min-width: 300px;
 }
 
-#signUpContainer {
-	min-width: 400px !important;
+.signUpContainer {
+	width: clamp(300px, 50%, 500px);
 }
 
 .container form {
@@ -180,8 +183,9 @@ button {
 .profileOverlay {
 	display: none;
 	position: relative;
-	top: -35px;
-	right: 35px;
+	/* Prfoile Icon has exact square dimension of 8em + 8px*/
+	top: calc(calc(var(--userIconSize) * -4) + (-4px));
+  	right: calc(calc(var(--userIconSize) * 4) + 4px);
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -229,25 +233,22 @@ button {
 
 /* #region User Profile Icon */
 .userIcon {
-	display: flex;
-	flex-direction: column;
-	position: relative;
-	font-size: 0.5em;
+	font-size: var(--userIconSize);
 	/* float: left; */
 	margin: 1em;
 	border-radius: 50%;
-	border: 2px solid skyblue;
+	border: 1.6px solid skyblue;
 	height: 6em;
 	width: 6em;
 	background: none;
 	cursor: pointer;
-	padding: 2px;
+	padding: 2.4px;
 	transition: background-color 0.3s ease;
 }
 
 .userIcon::before {
 	content: "";
-	/* display: block; */
+	display: block;
 	height: 2em;
 	width: 2em;
 	background: skyblue;
@@ -259,7 +260,7 @@ button {
 
 .userIcon::after {
 	content: "";
-	/* display: block; */
+	display: block;
 	height: 2em;
 	width: 4em;
 	background: skyblue;

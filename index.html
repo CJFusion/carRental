@@ -69,7 +69,7 @@
 						document.getElementById("loginError").style.display = 'flex';
 						document.getElementById("loginError").textContent = res.message;
 					}
-					throw new Error("\n" + await res.error + "\n" + await res.message);
+					throw new Error("\n" + res.error + "\n" + res.message);
 				}
 
 				return res;
@@ -81,6 +81,8 @@
 				console.error('Fetch API -', error);
 			});
 		};
+
+		
 	</script>
 
 	<style>
