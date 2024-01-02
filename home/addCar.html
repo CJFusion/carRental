@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -21,17 +21,20 @@
 			<input type="text" id="model" name="model" oninput="validateInput(event, /[^a-zA-Z0-9- ]/g)" required><br>
 
 			<label for="licenseNumber">License Number:</label>
-			<input type="text" id="licenseNumber" name="licenseNumber" oninput="validateInput(event, /[^a-zA-Z0-9 ]/g)" required><br>
+			<input type="text" id="licenseNumber" name="licenseNumber" oninput="validateInput(event, /[^a-zA-Z0-9 ]/g)"
+				required><br>
 
 			<label for="capacity">Seating Capacity:</label>
-			<input type="number" id="capacity" name="capacity" min="1" max="99" oninput="validateInput(event, /[^0-9]/g)" required><br>
+			<input type="number" id="capacity" name="capacity" min="1" max="99"
+				oninput="validateInput(event, /[^0-9]/g)" required><br>
 
 			<label for="rentPerDay">Rent Per Day:</label>
-			<input type="number" id="rentPerDay" name="rentPerDay" min="1" oninput="validateInput(event, /[^0-9]/g)" required><br>
+			<input type="number" id="rentPerDay" name="rentPerDay" min="1" oninput="validateInput(event, /[^0-9]/g)"
+				required><br>
 
 			<div id="registerError"></div>
 
-			<input type="hidden" name="submit_action" value="submit_cars">
+			<input type="hidden" name="submitAction" value="submitCars">
 			<input type="submit" value="Add Car">
 		</form>
 	</div>
@@ -65,6 +68,9 @@
 				method: 'POST',
 				body: formData,
 			}).then(async response => {
+				if (response.redirected)
+					window.location.href = response.url;
+
 				let res = await response.text();
 				try {
 					res = JSON.parse(res);
@@ -89,10 +95,12 @@
 				console.error('Fetch API -', error);
 			});
 		}
-		const validateInput = (event, nregex) => {event.target.value = event.target.value.replace(nregex, '');
-		
-		if(event.target.name === 'licenseNumber')
-		event.target.value = event.target.value.replace(/[a-z]/g, (match) => match.toUpperCase())};
+		const validateInput = (event, nregex) => {
+			event.target.value = event.target.value.replace(nregex, '');
+
+			if (event.target.name === 'licenseNumber')
+				event.target.value = event.target.value.replace(/[a-z]/g, (match) => match.toUpperCase())
+		};
 
 	</script>
 </body>

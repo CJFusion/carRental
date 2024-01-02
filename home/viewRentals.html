@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -8,7 +8,7 @@
 	<!-- Add your CSS stylesheets or links here -->
 </head>
 
-<body>
+<body onload="displayBookedCars()">
 	<h2>View Booked Cars</h2>
 	<div id="bookedCarsList">
 		<!-- Booked car details will be displayed here -->
@@ -19,15 +19,18 @@
 		const getBookingsList = () => {
 
 			//Filler Database Fetched Data
-			// return { "agencyId": { "2": { "carId": { "3": { "model": "Tesla Model S", "license_number": "MH 01 AB 1234", "capacity": "5", "rent_per_day": "600.00" }, "4": { "model": "Porsche Cayenne", "license_number": "DL 02 CD 5678", "capacity": "4", "rent_per_day": "550.00" }, "5": { "model": "Mercedes-Benz GLE", "license_number": "KA 05 EF 9012", "capacity": "5", "rent_per_day": "700.00" }, "6": { "model": "BMW X5", "license_number": "TN 06 GH 3456", "capacity": "4", "rent_per_day": "620.00" }, "7": { "model": "Audi Q7", "license_number": "UP 07 IJ 7890", "capacity": "5", "rent_per_day": "580.00" } } }, "11": { "carId": { "8": { "model": "Land Rover Range Rover", "license_number": "GJ 08 KL 1234", "capacity": "4", "rent_per_day": "800.00" }, "9": { "model": "Bentley Bentayga", "license_number": "MH 09 MN 5678", "capacity": "4", "rent_per_day": "900.00" }, "10": { "model": "Rolls-Royce Cullinan", "license_number": "UP 10 OP 9012", "capacity": "4", "rent_per_day": "850.00" }, "11": { "model": "Ferrari Portofino", "license_number": "DL 11 QR 3456", "capacity": "4", "rent_per_day": "1000.00" }, "12": { "model": "Lamborghini Urus", "license_number": "TN 12 ST 7890", "capacity": "4", "rent_per_day": "950.00" } } }, "13": { "carId": { "13": { "model": "Maserati Levante", "license_number": "KA 13 UV 1234", "capacity": "5", "rent_per_day": "750.00" }, "14": { "model": "Aston Martin DBX", "license_number": "MH 14 WX 5678", "capacity": "4", "rent_per_day": "700.00" }, "15": { "model": "McLaren GT", "license_number": "GJ 15 YZ 9012", "capacity": "5", "rent_per_day": "820.00" }, "16": { "model": "Bugatti Chiron", "license_number": "DL 16 AB 3456", "capacity": "5", "rent_per_day": "1500.00" }, "17": { "model": "Porsche 911 Turbo", "license_number": "TN 17 CD 7890", "capacity": "5", "rent_per_day": "1200.00" } } } } }
+			// return { "agencyId": { "2": { "carId": { "3": { "model": "Tesla Model S", "license_number": "MH 01 AB 1234", "capacity"vie: "5", "rent_per_day": "600.00" }, "4": { "model": "Porsche Cayenne", "license_number": "DL 02 CD 5678", "capacity": "4", "rent_per_day": "550.00" }, "5": { "model": "Mercedes-Benz GLE", "license_number": "KA 05 EF 9012", "capacity": "5", "rent_per_day": "700.00" }, "6": { "model": "BMW X5", "license_number": "TN 06 GH 3456", "capacity": "4", "rent_per_day": "620.00" }, "7": { "model": "Audi Q7", "license_number": "UP 07 IJ 7890", "capacity": "5", "rent_per_day": "580.00" } } }, "11": { "carId": { "8": { "model": "Land Rover Range Rover", "license_number": "GJ 08 KL 1234", "capacity": "4", "rent_per_day": "800.00" }, "9": { "model": "Bentley Bentayga", "license_number": "MH 09 MN 5678", "capacity": "4", "rent_per_day": "900.00" }, "10": { "model": "Rolls-Royce Cullinan", "license_number": "UP 10 OP 9012", "capacity": "4", "rent_per_day": "850.00" }, "11": { "model": "Ferrari Portofino", "license_number": "DL 11 QR 3456", "capacity": "4", "rent_per_day": "1000.00" }, "12": { "model": "Lamborghini Urus", "license_number": "TN 12 ST 7890", "capacity": "4", "rent_per_day": "950.00" } } }, "13": { "carId": { "13": { "model": "Maserati Levante", "license_number": "KA 13 UV 1234", "capacity": "5", "rent_per_day": "750.00" }, "14": { "model": "Aston Martin DBX", "license_number": "MH 14 WX 5678", "capacity": "4", "rent_per_day": "700.00" }, "15": { "model": "McLaren GT", "license_number": "GJ 15 YZ 9012", "capacity": "5", "rent_per_day": "820.00" }, "16": { "model": "Bugatti Chiron", "license_number": "DL 16 AB 3456", "capacity": "5", "rent_per_day": "1500.00" }, "17": { "model": "Porsche 911 Turbo", "license_number": "TN 17 CD 7890", "capacity": "5", "rent_per_day": "1200.00" } } } } }
 
 
 			// TODO: Add logic to retrieve agency id from session data
 			agencyId = 2;
 
-			let returnData = fetch(`../assets/dbHandling.php/Bookings/Agency/${agencyId}`, {
+			let returnData = fetch(`../assets/dbHandling.php/Bookings/Agency/0`, {
 				method: 'GET',
 			}).then(async response => {
+				if (response.redirected)
+					window.location.href = response.url;
+
 				let res = await response.text();
 				try {
 					res = JSON.parse(res);
@@ -48,10 +51,12 @@
 			}).then(data => {
 				console.table(data);
 				if (data.message === `Agency's booked cars list fetched successfully.`)
-					console.log("View Cars Page Executed Successfully.");
+					return data;
 			}).catch(error => {
 				console.error('Fetch API -', error);
 			});
+
+			return returnData;
 		}
 
 		// Simulated data - Replace this with data retrieved from the server
@@ -75,32 +80,36 @@
 		];
 
 		// Function to display booked cars and associated customers
-		function displayBookedCars() {
+		async function displayBookedCars() {
+			let bookingsList = await getBookingsList();
+
 			var bookedCarsListDiv = document.getElementById("bookedCarsList");
 			bookedCarsListDiv.innerHTML = ""; // Clear previous content
 
-			bookedCars.forEach(function (bookedCar) {
+			// 			bookedCars.forEach(function (bookedCar) {
+			Object.values(bookingsList.carId).forEach(bookedCar => {
+
 				var carDetails = document.createElement("div");
 				carDetails.innerHTML = `
-                    <h3>${bookedCar.vehicleModel}</h3>
-                    <ul>
-                        ${bookedCar.bookedCustomers.map(customer => `
-                            <li>
-                                Customer ID: ${customer.customerId}, 
-                                Name: ${customer.customerName}, 
-                                Start Date: ${customer.startDate}, 
-                                End Date: ${customer.endDate}
-                            </li>`).join('')}
-                    </ul>
-                    `;
+				<h3>${bookedCar.model}</h3>
+					<ul>
+					${Object.values(bookedCar)
+						.filter(key => key !== bookedCar.model)
+						.map(car => `
+						<li>
+							Customer ID: ${car.customerId},
+							Name: ${car.customerName},
+							Start Date: ${car.bookDate},
+							End Date: ${car.endDate}
+						</li>`).join('')}
+					</ul>`;
 
 				bookedCarsListDiv.appendChild(carDetails);
 			});
 		}
 
 		// Display booked cars when the page loads
-		displayBookedCars();
-		getBookingsList();
+		// 		displayBookedCars(); // moved to body onload function call
 	</script>
 </body>
 

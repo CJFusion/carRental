@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -15,7 +15,7 @@
 		<div class="hrule vertMargins"></div>
 		<form id="agencyRegister" onsubmit="return passMatch(event)">
 			<!-- Account Credentials -->
-			<input type="hidden" name="user_type" value="agency">
+			<input type="hidden" name="userType" value="agency">
 
 			<label for="username">Username:</label>
 			<input type="text" id="username" name="username" oninput="validateInput(event, /[^a-zA-Z0-9]/g)" required>
@@ -35,22 +35,24 @@
 			<div class="hrule vertMargins"></div>
 
 			<!-- Agency Information -->
-			<label for="agency_name">Agency Name:</label>
-			<input type="text" id="agency_name" name="agency_name" oninput="validateInput(event, /[^a-zA-Z. ]/g)" required>
+			<label for="agencyName">Agency Name:</label>
+			<input type="text" id="agencyName" name="agencyName" oninput="validateInput(event, /[^a-zA-Z. ]/g)"
+				required>
 
-			<label for="full_name">Agency Contact Person Name:</label>
-			<input type="text" id="full_name" name="full_name" oninput="validateInput(event, /[^a-zA-Z ]/g)" required>
+			<label for="fullName">Agency Contact Person Name:</label>
+			<input type="text" id="fullName" name="fullName" oninput="validateInput(event, /[^a-zA-Z ]/g)" required>
 
 			<label for="phone">Agency Contact Phone Number:</label>
 			<input type="tel" id="phone" name="phone" maxlength="10" title="Enter 10 digit phone number"
 				pattern="[0-9]{10,10}" oninput="validateInput(event, /[^0-9]/g)" required>
 
-			<label for="address_state">Agency State/Province:</label>
-			<input type="text" id="address_state" name="address_state" oninput="validateInput(event, /[^a-zA-Z]/g)" required>
+			<label for="addressState">Agency State/Province:</label>
+			<input type="text" id="addressState" name="addressState" oninput="validateInput(event, /[^a-zA-Z]/g)"
+				required>
 
 			<div id="registerError"></div>
 
-			<input type="hidden" name="submit_action" value="submit_users">
+			<input type="hidden" name="submitAction" value="submitUsers">
 			<input type="submit" class="blueBtn" value="Create account">
 		</form>
 	</div>
@@ -82,6 +84,9 @@
 				method: 'POST',
 				body: formData,
 			}).then(async response => {
+				if (response.redirected)
+					window.location.href = response.url;
+
 				let res = await response.text();
 				try {
 					res = JSON.parse(res);

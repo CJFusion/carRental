@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="../assets/app.js"></script>
 </head>
 
-<body class="greyBg">
+<body class="greyBg" onload="loadProfileOverlay()">
 	<nav class="navBar flexCentered">
 		<div class="flexItem">
 			<h2>Rent a Car</h2>
@@ -21,8 +21,10 @@
 				<div class="profileOverlayContent">
 					<h3>...</h3>
 					<span class="flexCentereds">
-						<button class="registerBtn" onclick="profileOpts('addCar.html')">Add Cars</button>
-						<button class="registerBtn" onclick="profileOpts('viewRentals.html')">View Rentals</button>
+						<button class="registerBtn agencyBtns" onclick="profileOpts('addCar.html')">Add Cars</button>
+						<button class="registerBtn agencyBtns" onclick="profileOpts('viewRentals.html')">View
+							Rentals</button>
+						<button class="registerBtn" onclick="logout()">Logout</button>
 					</span>
 				</div>
 
@@ -88,6 +90,31 @@
 
 	<script>
 
+		window.isCustomerLoggedIn = null;
+		const loadProfileOverlay = async () => {
+			let response = await fetch('/assets/dbHandling.php/isCustomer', {
+				method: 'GET',
+			}).then(response => {
+				return response.text();
+			}).catch(error => {
+				console.error('Fetch API -', error);
+			});
+
+			if (response === 'true') {
+				isCustomerLoggedIn = true;
+				// document.getElementsByClassName('agencyBtns')
+				document.querySelectorAll('.agencyBtns').forEach(element => element.style.display = 'none');
+			} else
+				isCustomerLoggedIn = false;
+
+			displayCars();
+		}
+
+		const logout = () => {
+			window.location.href = "/assets/logout.php";
+			// alert("Coming Soon"); // TODO: 1. Create logout session php
+		}
+
 		const profileOpts = (htmlPage) => {
 			if (htmlPage === 'addCar.html')
 				window.location.href = `./${htmlPage}`;
@@ -124,6 +151,9 @@
 			return fetch('../assets/dbHandling.php/Cars/', {
 				method: 'GET',
 			}).then(async response => {
+				if (response.redirected)
+					window.location.href = response.url;
+
 				let res = await response.text();
 				try {
 					res = JSON.parse(res);
@@ -151,12 +181,17 @@
 		}
 
 		const addBooking = (event) => {
+			event.preventDefault();
+
 			let formData = new FormData(event.target);
 
-			fetch('../assets/dbHandling.php/Bookings/', {
+			fetch('/assets/dbHandling.php/Bookings/', {
 				method: 'POST',
 				body: formData,
 			}).then(async response => {
+				if (response.redirected)
+					window.location.href = response.url;
+
 				let res = await response.text();
 				try {
 					res = JSON.parse(res);
@@ -185,14 +220,11 @@
 
 		// Function to display available cars
 		async function displayCars() {
-
-			document.getElementById('loader').style.display = 'flex';
-
 			let getList = await getCarList();
 
 			if (!getList)
 				return;
-
+			// Loader's default display value is set as 'flex', however inner html is overwritten in this case anyways
 			document.getElementById('loader').style.display = 'none';
 
 			var carListDiv = document.getElementById("carList");
@@ -207,14 +239,16 @@
 
 					carDetails.innerHTML = `
 						<h3>${car[key].model}</h3>
-						<p>License number: ${car[key].license_number}</p>
+						<p>License number: ${car[key].licenseNumber}</p>
 						<p>Seating capacity: ${car[key].capacity}</p>
-						<p>Rent/day: ${car[key].rent_per_day}</p>
+						<p>Rent/day: ${car[key].rentPerDay}</p>
 					`;
 
-					if (isCustomerLoggedIn()) {
+					if (isCustomerLoggedIn) {
 						let bookForm = document.createElement("form");
-						bookForm.setAttribute('action', 'addBooking(event)');
+						bookForm.setAttribute('onsubmit', 'addBooking(event)');
+						bookForm.setAttribute('class', 'bookForm');
+						// Object.assign(bookForm, { action: 'addBooking(event)', class: 'bookForm' });
 						bookForm.innerHTML = `
 							<input type="number" min="1" max="31" name="daysBooked" title="1 month booking max" required>
 
@@ -228,12 +262,10 @@
 
 							<input type="date" name="bookDate" required>
 
-							<input type="hidden" name="userId" value = "1">
 							<input type="hidden" name="carId" value = "${key}">
-							<input type="hidden" name="submit_action" value = "submit_bookings">
+							<input type="hidden" name="submitAction" value = "submitBookings">
 							<input type="submit" value="Rent">
 						`;
-						//TODO: Add logic for retrieving and submitiing user_id 
 						carDetails.appendChild(bookForm);
 					}
 
@@ -291,10 +323,11 @@
 		}
 
 		// Function to check if customer is logged in (dummy example)
-		function isCustomerLoggedIn() {
-			// Replace this with your actual logic to check if a customer is logged in
-			return true; // Return true if customer is logged in, false otherwise
-		}
+		// 		function isCustomerLoggedIn() {
+		// 		    return isCustomer;
+		// 			// Replace this with your actual logic to check if a customer is logged in
+		// 			return false; // Return true if customer is logged in, false otherwise
+		// 		}
 
 		// Function to handle renting a car
 		function rentCar(vehicleModel) {
@@ -308,7 +341,7 @@
 		}
 
 		// Display available cars when the page loads
-		displayCars();
+		// 		displayCars(); // moved to loadProfileOverlay method on page load
 	</script>
 </body>
 

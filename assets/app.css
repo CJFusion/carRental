@@ -3,6 +3,13 @@
 	--userIconSize: calc(0.4 * 1rem);
 }
 
+body>div:last-of-type:has(a) {
+	transform: scale(0) !important;
+	visibility: hidden !important;
+	position: absolute !important;
+	pointer-events: none !important;
+}
+
 :is(body, html, h1, h2, h3, h4, h5, h6) {
 	margin: 0;
 	padding: 0;
@@ -185,7 +192,7 @@ button {
 	position: relative;
 	/* Prfoile Icon has exact square dimension of 8em + 8px*/
 	top: calc(calc(var(--userIconSize) * -4) + (-4px));
-  	right: calc(calc(var(--userIconSize) * 4) + 4px);
+	right: calc(calc(var(--userIconSize) * 4) + 4px);
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
