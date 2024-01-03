@@ -5,6 +5,20 @@ require_once('sessionConfig.php');
 
 $currentUrl = '/assets/dbHandling.php';
 
+if (!isAjaxOrFetch()) {
+	http_response_code(400);
+	echo json_encode([
+		'error' => 'Bad Request',
+		'message' => 'Direct request detected. Use the application as intended.'
+	]);
+	exit();
+}
+
+function isAjaxOrFetch()
+{
+	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'fetch');
+}
+
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitAction'])) {
 	$submitAction = $_POST['submitAction'];

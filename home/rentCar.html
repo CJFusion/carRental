@@ -94,6 +94,9 @@
 		const loadProfileOverlay = async () => {
 			let response = await fetch('/assets/dbHandling.php/isCustomer', {
 				method: 'GET',
+				headers: {
+					'X-Requested-With': 'fetch'
+				}
 			}).then(response => {
 				return response.text();
 			}).catch(error => {
@@ -150,6 +153,9 @@
 
 			return fetch('../assets/dbHandling.php/Cars/', {
 				method: 'GET',
+				headers: {
+					'X-Requested-With': 'fetch'
+				}
 			}).then(async response => {
 				if (response.redirected)
 					window.location.href = response.url;
@@ -188,6 +194,9 @@
 			fetch('/assets/dbHandling.php/Bookings/', {
 				method: 'POST',
 				body: formData,
+				headers: {
+					'X-Requested-With': 'fetch'
+				}
 			}).then(async response => {
 				if (response.redirected)
 					window.location.href = response.url;

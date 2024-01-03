@@ -67,6 +67,9 @@
 			fetch('../assets/dbHandling.php', {
 				method: 'POST',
 				body: formData,
+				headers: {
+					'X-Requested-With': 'fetch'
+				}
 			}).then(async response => {
 				if (response.redirected)
 					window.location.href = response.url;

@@ -27,6 +27,9 @@
 
 			let returnData = fetch(`../assets/dbHandling.php/Bookings/Agency/0`, {
 				method: 'GET',
+				headers: {
+					'X-Requested-With': 'fetch'
+				}
 			}).then(async response => {
 				if (response.redirected)
 					window.location.href = response.url;

@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<meta name="author" content="Mr. Audrian K Marak">
-	<meta name="Linkedin profile" content="www.linkedin.com/in/audrian-marak-tec23" >
+	<meta name="Linkedin profile" content="www.linkedin.com/in/audrian-marak-tec23">
 
 	<!--<meta name="description " -->
 	<!--content="A better place to learn computer science"> -->
@@ -56,6 +56,9 @@
 			fetch('assets/login.php', {
 				method: 'POST',
 				body: formData,
+				headers: {
+					'X-Requested-With': 'fetch'
+				}
 			}).then(async response => {
 				let res = await response.text();
 				try {
