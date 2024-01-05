@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>View Booked Cars</title>
-	<!-- Add your CSS stylesheets or links here -->
+	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
 </head>
 
 <body onload="displayBookedCars()">
@@ -13,74 +13,47 @@
 	<div id="bookedCarsList">
 		<!-- Booked car details will be displayed here -->
 	</div>
+	<div id="registerError"></div>
 
-	<script>
-
-		const getBookingsList = () => {
-
-			//Filler Database Fetched Data
-			// return { "agencyId": { "2": { "carId": { "3": { "model": "Tesla Model S", "license_number": "MH 01 AB 1234", "capacity"vie: "5", "rent_per_day": "600.00" }, "4": { "model": "Porsche Cayenne", "license_number": "DL 02 CD 5678", "capacity": "4", "rent_per_day": "550.00" }, "5": { "model": "Mercedes-Benz GLE", "license_number": "KA 05 EF 9012", "capacity": "5", "rent_per_day": "700.00" }, "6": { "model": "BMW X5", "license_number": "TN 06 GH 3456", "capacity": "4", "rent_per_day": "620.00" }, "7": { "model": "Audi Q7", "license_number": "UP 07 IJ 7890", "capacity": "5", "rent_per_day": "580.00" } } }, "11": { "carId": { "8": { "model": "Land Rover Range Rover", "license_number": "GJ 08 KL 1234", "capacity": "4", "rent_per_day": "800.00" }, "9": { "model": "Bentley Bentayga", "license_number": "MH 09 MN 5678", "capacity": "4", "rent_per_day": "900.00" }, "10": { "model": "Rolls-Royce Cullinan", "license_number": "UP 10 OP 9012", "capacity": "4", "rent_per_day": "850.00" }, "11": { "model": "Ferrari Portofino", "license_number": "DL 11 QR 3456", "capacity": "4", "rent_per_day": "1000.00" }, "12": { "model": "Lamborghini Urus", "license_number": "TN 12 ST 7890", "capacity": "4", "rent_per_day": "950.00" } } }, "13": { "carId": { "13": { "model": "Maserati Levante", "license_number": "KA 13 UV 1234", "capacity": "5", "rent_per_day": "750.00" }, "14": { "model": "Aston Martin DBX", "license_number": "MH 14 WX 5678", "capacity": "4", "rent_per_day": "700.00" }, "15": { "model": "McLaren GT", "license_number": "GJ 15 YZ 9012", "capacity": "5", "rent_per_day": "820.00" }, "16": { "model": "Bugatti Chiron", "license_number": "DL 16 AB 3456", "capacity": "5", "rent_per_day": "1500.00" }, "17": { "model": "Porsche 911 Turbo", "license_number": "TN 17 CD 7890", "capacity": "5", "rent_per_day": "1200.00" } } } } }
-
-
-			// TODO: Add logic to retrieve agency id from session data
-			agencyId = 2;
-
-			let returnData = fetch(`../assets/dbHandling.php/Bookings/Agency/0`, {
-				method: 'GET',
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(async response => {
-				if (response.redirected)
-					window.location.href = response.url;
-
-				let res = await response.text();
-				try {
-					res = JSON.parse(res);
-				} catch (error) {
-					throw new Error('\nError parsing JSON: ' + res);
-				}
-
-				if (!response.ok) {
-					if (response.status >= 400) {
-						console.table(res);
-						// 		document.getElementById("registerError").style.display = 'flex';
-						// 		document.getElementById("registerError").textContent = res.message;
-					}
-					throw new Error("\n" + res.error + "\n" + res.message);
-				}
-
-				return res;
-			}).then(data => {
-				console.table(data);
-				if (data.message === `Agency's booked cars list fetched successfully.`)
-					return data;
-			}).catch(error => {
-				console.error('Fetch API -', error);
-			});
-
-			return returnData;
+	<style>
+		#registerError,
+		#passwordError {
+			display: none;
+			color: rgb(217, 48, 37);
+			align-self: center;
+			font-size: 12px;
+			transform: translateY(-10px);
 		}
 
-		// Simulated data - Replace this with data retrieved from the server
-		var bookedCars = [
-			{
-				carId: 1,
-				vehicleModel: "Car Model 1",
-				bookedCustomers: [
-					{ customerId: 101, customerName: "Customer A", startDate: "2023-12-01", endDate: "2023-12-03" },
-					{ customerId: 102, customerName: "Customer B", startDate: "2023-12-05", endDate: "2023-12-07" }
-				]
-			},
-			{
-				carId: 2,
-				vehicleModel: "Car Model 2",
-				bookedCustomers: [
-					{ customerId: 103, customerName: "Customer C", startDate: "2023-12-10", endDate: "2023-12-12" }
-				]
+		:is(#registerError, #passwordError)::before {
+			content: '!';
+			color: white;
+			padding: 2px;
+			font-family: Carlito;
+			font-size: 0.8em;
+			margin-right: 5px;
+			width: 1.2em;
+			height: 1.2em;
+			border-radius: 50%;
+			background-color: rgb(217, 48, 37);
+			text-align: center;
+		}
+	</style>
+	<script>
+
+		const getBookingsList = async () => {
+
+			const onFailure = (data) => {
+				document.getElementById("registerError").style.display = 'flex';
+				document.getElementById("registerError").textContent = data.error;
 			}
-			// Add more booked car details as needed
-		];
+
+			const onSuccess = (data) => {
+				return data;
+			}
+
+			return await requestFetch('/api/Bookings/Agency', 'GET', {}, onFailure, onSuccess);
+		}
 
 		// Function to display booked cars and associated customers
 		async function displayBookedCars() {
@@ -89,7 +62,6 @@
 			var bookedCarsListDiv = document.getElementById("bookedCarsList");
 			bookedCarsListDiv.innerHTML = ""; // Clear previous content
 
-			// 			bookedCars.forEach(function (bookedCar) {
 			Object.values(bookingsList.carId).forEach(bookedCar => {
 
 				var carDetails = document.createElement("div");
@@ -110,9 +82,6 @@
 				bookedCarsListDiv.appendChild(carDetails);
 			});
 		}
-
-		// Display booked cars when the page loads
-		// 		displayBookedCars(); // moved to body onload function call
 	</script>
 </body>
 

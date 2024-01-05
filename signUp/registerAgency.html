@@ -5,7 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Agency Registration</title>
-	<link rel="stylesheet" type="text/css" href="../assets/app.css"> <!-- Link to your CSS file -->
+	<link rel="stylesheet" type="text/css" href="../assets/app.css">
+	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
 </head>
 
 <body class="flexCentered maxViewPort greyBg">
@@ -15,7 +16,6 @@
 		<div class="hrule vertMargins"></div>
 		<form id="agencyRegister" onsubmit="return passMatch(event)">
 			<!-- Account Credentials -->
-			<input type="hidden" name="userType" value="agency">
 
 			<label for="username">Username:</label>
 			<input type="text" id="username" name="username" oninput="validateInput(event, /[^a-zA-Z0-9]/g)" required>
@@ -24,12 +24,11 @@
 			<input type="email" id="email" name="email" required>
 
 			<label for="password">Password:</label>
-			<input type="password" id="password" name="password" required>
+			<input type="password" id="password" name="password" oninput="passMatch(event)" required>
 
 			<label for="confirmPassword">Confirm Password:</label>
 			<input type="password" id="confirmPassword" name="confirmPassword" oninput="passMatch(event)" required>
-			<span id="passwordError">Passwords
-				do not match!</span>
+			<span id="passwordError">Passwords do not match!</span>
 
 			<h2>Additional Information</h2>
 			<div class="hrule vertMargins"></div>
@@ -51,73 +50,9 @@
 				required>
 
 			<div id="registerError"></div>
-
-			<input type="hidden" name="submitAction" value="submitUsers">
 			<input type="submit" class="blueBtn" value="Create account">
 		</form>
 	</div>
-
-	<script>
-
-		const passMatch = (event) => {
-			event.preventDefault();
-			let property = 'none';
-			if (!(document.getElementById("password").value === document.getElementById("confirmPassword").value))
-				property = 'flex';
-			document.getElementById("passwordError").style.display = property;
-
-			if (!event.submitter)
-				return;
-
-			if (property !== 'none') {
-				document.getElementById("confirmPassword").focus();
-				return;
-			}
-
-			createAccAuth(event);
-		}
-
-		const createAccAuth = (event) => {
-			let formData = new FormData(event.target);
-
-			fetch('../assets/dbHandling.php', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(async response => {
-				if (response.redirected)
-					window.location.href = response.url;
-
-				let res = await response.text();
-				try {
-					res = JSON.parse(res);
-				} catch (error) {
-					throw new Error('\nError parsing JSON: ' + res);
-				}
-
-				if (!response.ok) {
-					if (response.status >= 400) {
-						document.getElementById("registerError").style.display = 'flex';
-						document.getElementById("registerError").textContent = res.message;
-					}
-					throw new Error("\n" + res.error + "\n" + res.message);
-				}
-
-				return res;
-			}).then(data => {
-				console.table(data);
-				if (data.message === 'New user: "' + formData.get('username') + '" recorded into Users table successfully')
-					window.location.href = '../home/rentCar.html';
-			}).catch(error => {
-				console.error('Fetch API -', error);
-			});
-		}
-
-		const validateInput = (event, nregex) => event.target.value = event.target.value.replace(nregex, '');
-
-	</script>
 
 	<style>
 		#registerError,

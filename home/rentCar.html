@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Available Cars</title>
 	<link rel="stylesheet" type="text/css" href="../assets/app.css">
-	<script type="text/javascript" src="../assets/app.js"></script>
+	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
 </head>
 
 <body class="greyBg" onload="loadProfileOverlay()">
@@ -92,98 +92,46 @@
 
 		window.isCustomerLoggedIn = null;
 		const loadProfileOverlay = async () => {
-			let response = await fetch('/assets/dbHandling.php/isCustomer', {
-				method: 'GET',
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(response => {
-				return response.text();
-			}).catch(error => {
-				console.error('Fetch API -', error);
-			});
 
-			if (response === 'true') {
-				isCustomerLoggedIn = true;
-				// document.getElementsByClassName('agencyBtns')
+			const onFailure = (data) => {
+				// document.getElementById("registerError").style.display = 'flex';
+				// document.getElementById("registerError").textContent = data.message;
+			}
+
+			const onSuccess = (data) => {
+				return data;
+			}
+
+			let response = await requestFetch('/api/isCustomer', 'GET', {}, onFailure, onSuccess);
+
+			if (isCustomerLoggedIn = response.bool)
 				document.querySelectorAll('.agencyBtns').forEach(element => element.style.display = 'none');
-			} else
-				isCustomerLoggedIn = false;
 
 			displayCars();
 		}
 
-		const logout = () => {
-			window.location.href = "/assets/logout.php";
-			// alert("Coming Soon"); // TODO: 1. Create logout session php
-		}
+		const logout = requestFetch('/api/logout', 'GET', {}, () => { }, () => { });
+		// window.location.href = "/assets/logout.php";
+		// FIXME: 1. Create logout session php
 
-		const profileOpts = (htmlPage) => {
-			if (htmlPage === 'addCar.html')
-				window.location.href = `./${htmlPage}`;
-			window.location.href = `./${htmlPage}`;
-		}
-		// Simulated car data (to be retrieved from the server)
+		const profileOpts = (htmlPage) => window.location.href = `./${htmlPage}`;
 
-		// car_id 	agency_id 	model 	license_number 	capacity 	rent_per_day 	
-		var cars = [
-			{
-				vehicleModel: "Car Model 1",
-				vehicleNumber: "ABC123",
-				capacity: 5,
-				rentPerDay: 50
-			},
-			{
-				vehicleModel: "Car Model 2",
-				vehicleNumber: "XYZ789",
-				capacity: 4,
-				rentPerDay: 60
-			}
-			// Add more car details as needed
-		];
-
-
-		const getCarList = () => {
+		const getCarList = async () => {
 
 			//Filler Database Fetched Data
 			// return { "agencyId": { "2": { "carId": { "3": { "model": "Tesla Model S", "license_number": "MH 01 AB 1234", "capacity": "5", "rent_per_day": "600.00" }, "4": { "model": "Porsche Cayenne", "license_number": "DL 02 CD 5678", "capacity": "4", "rent_per_day": "550.00" }, "5": { "model": "Mercedes-Benz GLE", "license_number": "KA 05 EF 9012", "capacity": "5", "rent_per_day": "700.00" }, "6": { "model": "BMW X5", "license_number": "TN 06 GH 3456", "capacity": "4", "rent_per_day": "620.00" }, "7": { "model": "Audi Q7", "license_number": "UP 07 IJ 7890", "capacity": "5", "rent_per_day": "580.00" } } }, "11": { "carId": { "8": { "model": "Land Rover Range Rover", "license_number": "GJ 08 KL 1234", "capacity": "4", "rent_per_day": "800.00" }, "9": { "model": "Bentley Bentayga", "license_number": "MH 09 MN 5678", "capacity": "4", "rent_per_day": "900.00" }, "10": { "model": "Rolls-Royce Cullinan", "license_number": "UP 10 OP 9012", "capacity": "4", "rent_per_day": "850.00" }, "11": { "model": "Ferrari Portofino", "license_number": "DL 11 QR 3456", "capacity": "4", "rent_per_day": "1000.00" }, "12": { "model": "Lamborghini Urus", "license_number": "TN 12 ST 7890", "capacity": "4", "rent_per_day": "950.00" } } }, "13": { "carId": { "13": { "model": "Maserati Levante", "license_number": "KA 13 UV 1234", "capacity": "5", "rent_per_day": "750.00" }, "14": { "model": "Aston Martin DBX", "license_number": "MH 14 WX 5678", "capacity": "4", "rent_per_day": "700.00" }, "15": { "model": "McLaren GT", "license_number": "GJ 15 YZ 9012", "capacity": "5", "rent_per_day": "820.00" }, "16": { "model": "Bugatti Chiron", "license_number": "DL 16 AB 3456", "capacity": "5", "rent_per_day": "1500.00" }, "17": { "model": "Porsche 911 Turbo", "license_number": "TN 17 CD 7890", "capacity": "5", "rent_per_day": "1200.00" } } } } }
 
 
+			const onFailure = (data) => {
+				document.getElementById("registerError").style.display = 'flex';
+				document.getElementById("registerError").textContent = data.message;
+			}
 
+			const onSuccess = (data) => {
+				return data.availableCars;
+			}
 
-			return fetch('../assets/dbHandling.php/Cars/', {
-				method: 'GET',
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(async response => {
-				if (response.redirected)
-					window.location.href = response.url;
-
-				let res = await response.text();
-				try {
-					res = JSON.parse(res);
-				} catch (error) {
-					throw new Error('\nError parsing JSON: ' + res);
-				}
-
-				if (!response.ok) {
-					if (response.status >= 400) {
-						document.getElementById("registerError").style.display = 'flex';
-						document.getElementById("registerError").textContent = res.message;
-					}
-					throw new Error("\n" + res.error + "\n" + res.message);
-				}
-
-				return res;
-			}).then(data => {
-				console.table(data);
-				if (data.message === 'Car list fetched successfully.')
-					return data.availableCars;
-			}).catch(error => {
-				console.error('Fetch API -', error);
-				return false;
-			});
+			return await requestFetch('/api/Cars', 'GET', {}, onFailure, onSuccess);
 		}
 
 		const addBooking = (event) => {
@@ -191,40 +139,15 @@
 
 			let formData = new FormData(event.target);
 
-			fetch('/assets/dbHandling.php/Bookings/', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(async response => {
-				if (response.redirected)
-					window.location.href = response.url;
+			const onFailure = (data) => {
+				alert(data.message);
+			}
 
-				let res = await response.text();
-				try {
-					res = JSON.parse(res);
-				} catch (error) {
-					throw new Error('\nError parsing JSON: ' + res);
-				}
+			const onSuccess = (data) => {
+				alert(`Booked car successfully.`);
+			}
 
-				if (!response.ok) {
-					if (response.status >= 400) {
-						document.getElementById("registerError").style.display = 'flex';
-						document.getElementById("registerError").textContent = res.message;
-					}
-					throw new Error("\n" + res.error + "\n" + res.message);
-				}
-
-				return res;
-			}).then(data => {
-				console.table(data);
-				if (data.message === 'New booking on carId: "' + formData.get('carId') + '" recorded into Bookings table successfully')
-					alert(`Booked car successfully.`);
-				// window.location.href = '../home/rentCar.html';
-			}).catch(error => {
-				console.error('Fetch API -', error);
-			});
+			requestFetch('/api/Bookings', 'POST', formData, onFailure, onSuccess);
 		}
 
 		// Function to display available cars
@@ -233,7 +156,8 @@
 
 			if (!getList)
 				return;
-			// Loader's default display value is set as 'flex', however inner html is overwritten in this case anyways
+			// Loader's default display value is set as 'flex', 
+			// however inner html is overwritinng it in this case anyways
 			document.getElementById('loader').style.display = 'none';
 
 			var carListDiv = document.getElementById("carList");
@@ -272,7 +196,6 @@
 							<input type="date" name="bookDate" required>
 
 							<input type="hidden" name="carId" value = "${key}">
-							<input type="hidden" name="submitAction" value = "submitBookings">
 							<input type="submit" value="Rent">
 						`;
 						carDetails.appendChild(bookForm);
@@ -284,73 +207,8 @@
 
 					carListDiv.appendChild(carDetails);
 				}
-
-
-
-
-				// Object.values(agency.carId).forEach(function (car) {
-
-				// 	var carDetails = document.createElement("div");
-				// 	carDetails.classList.add("gridItem");
-
-				// 	carDetails.innerHTML = `
-				//     <h3>${car.model}</h3>
-				//     <p>License number: ${car.license_number}</p>
-				//     <p>Seating capacity: ${car.capacity}</p>
-				//     <p>Rent/day: ${car.rent_per_day}</p>
-				// `;
-
-				// 	if (isCustomerLoggedIn()) {
-				// 		let bookForm = document.createElement("form");
-				// 		bookForm.setAttribute('action', 'addBooking(event)');
-				// 		bookForm.innerHTML = `
-				// 		<input type="number" min="1" max="31" name="daysBooked" title="1 month booking max" required>
-
-				// 		<!--
-				// 		<select name="daysBooked" required>
-				//         	<option value="1">1 day</option>
-				//         	<option value="2">2 days</option>
-				//         	<!-- Add more options as needed --><!--
-				//     	</select>
-				// 		-->
-
-				// 		<input type="text" name="carId" value = "${Object.keys(agency.carId)[0]}">
-				// 		<input type="date" name="bookDate" required>
-				// 		<input type="submit" value="Rent">
-				// 		`;
-				// 		carDetails.appendChild(bookForm);
-				// 	}
-
-				// 	// var carDetailsWrapper = document.createElement("div");
-				// 	// carDetailsWrapper.classList.add("gridItem");
-				// 	// carDetailsWrapper.appendChild(carDetails);
-
-				// 	carListDiv.appendChild(carDetails);
-				// })
 			});
-
 		}
-
-		// Function to check if customer is logged in (dummy example)
-		// 		function isCustomerLoggedIn() {
-		// 		    return isCustomer;
-		// 			// Replace this with your actual logic to check if a customer is logged in
-		// 			return false; // Return true if customer is logged in, false otherwise
-		// 		}
-
-		// Function to handle renting a car
-		function rentCar(vehicleModel) {
-			if (!isCustomerLoggedIn()) {
-				window.location.href = 'login.html'; // Redirect to login page for non-logged-in users
-			} else {
-				// Handle the renting process for logged-in customers
-				// This could involve further interactions or backend operations
-				console.log(`Renting car: ${vehicleModel}`);
-			}
-		}
-
-		// Display available cars when the page loads
-		// 		displayCars(); // moved to loadProfileOverlay method on page load
 	</script>
 </body>
 

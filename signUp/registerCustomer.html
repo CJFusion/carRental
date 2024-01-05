@@ -5,7 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>User Registration</title>
-	<link rel="stylesheet" type="text/css" href="../assets/app.css"> <!-- Link to your CSS file -->
+	<link rel="stylesheet" type="text/css" href="../assets/app.css">
+	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
 </head>
 
 <body class="flexCentered maxViewPort greyBg">
@@ -15,7 +16,6 @@
 		<div class="hrule vertMargins"></div>
 		<form id="customerRegister" onsubmit="return passMatch(event)">
 			<!-- Account Credentials -->
-			<input type="hidden" name="userType" value="customer">
 
 			<label for="username">Username:</label>
 			<input type="text" id="username" name="username" oninput="validateInput(event, /[^a-zA-Z0-9]/g)" required>
@@ -52,96 +52,32 @@
 
 			<!-- Address Information -->
 			<!-- <label for="streetAddress">Street Address:</label>
-        <input type="text" id="streetAddress" name="streetAddress" required>
+			<input type="text" id="streetAddress" name="streetAddress" required>
             -->
 			<!-- <label for="city">City:</label>
-        <input type="text" id="city" name="city" required> -->
+			<input type="text" id="city" name="city" required> -->
 
 			<label for="addressState">State/Province:</label>
 			<input type="text" id="addressState" name="addressState" oninput="validateInput(event, /[^a-zA-Z]/g)"
 				required>
-			<!--             
-        <label for="postalCode">Postal Code:</label>
-        <input type="text" id="postalCode" name="postalCode" required>
-        
-        <label for="country">Country:</label>
-        <input type="text" id="country" name="country" required>
--->
+			<!-- 
+			<label for="postalCode">Postal Code:</label>
+			<input type="text" id="postalCode" name="postalCode" required>
+
+			<label for="country">Country:</label>
+			<input type="text" id="country" name="country" required>
+			-->
 			<!-- Additional Information (Optional) -->
 
-			<!--             
-        <label for="profilePicture">Profile Picture:</label>
-        <input type="file" id="profilePicture" name="profilePicture">
-            -->
+			<!-- 
+			<label for="profilePicture">Profile Picture:</label>
+			<input type="file" id="profilePicture" name="profilePicture">
+			-->
 
 			<div id="registerError"></div>
-
-			<input type="hidden" name="submitAction" value="submitUsers">
 			<input type="submit" class="blueBtn" value="Create account">
 		</form>
 	</div>
-
-	<script>
-
-		const passMatch = (event) => {
-			event.preventDefault();
-			let property = 'none';
-			if (!(document.getElementById("password").value === document.getElementById("confirmPassword").value))
-				property = 'flex';
-			document.getElementById("passwordError").style.display = property;
-
-			if (!event.submitter)
-				return;
-
-			if (property !== 'none') {
-				document.getElementById("confirmPassword").focus();
-				return;
-			}
-
-			createAccAuth(event);
-		}
-
-		const createAccAuth = (event) => {
-			let formData = new FormData(event.target);
-
-			fetch('../assets/dbHandling.php', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(async response => {
-				if (response.redirected)
-					window.location.href = response.url;
-
-				let res = await response.text();
-				try {
-					res = JSON.parse(res);
-				} catch (error) {
-					throw new Error('\nError parsing JSON: ' + res);
-				}
-
-				if (!response.ok) {
-					if (response.status >= 400) {
-						document.getElementById("registerError").style.display = 'flex';
-						document.getElementById("registerError").textContent = res.message;
-					}
-					throw new Error("\n" + res.error + "\n" + res.message);
-				}
-
-				return res;
-			}).then(data => {
-				console.table(data);
-				if (data.message === 'New user: "' + formData.get('username') + '" recorded into Users table successfully')
-					window.location.href = '../home/rentCar.html';
-			}).catch(error => {
-				console.error('Fetch API -', error);
-			});
-		}
-
-		const validateInput = (event, nregex) => event.target.value = event.target.value.replace(nregex, '');
-
-	</script>
 
 	<style>
 		#registerError,

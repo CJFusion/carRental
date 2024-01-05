@@ -14,10 +14,8 @@
 
 	<title>Login Page</title>
 
-	<link rel="stylesheet" type="text/css" href="assets/app.css">
-
-	<script type="text/javascript" src="assets/app.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/assets/app.css">
+	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
 </head>
 
 <body class="flexCentered maxViewPort greyBg">
@@ -46,47 +44,6 @@
 			</span>
 		</div>
 	</div>
-
-	<script>
-		const loginAuth = (event) => {
-			event.preventDefault();
-
-			var formData = new FormData(event.target);
-
-			fetch('assets/login.php', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(async response => {
-				let res = await response.text();
-				try {
-					res = JSON.parse(res);
-				} catch (error) {
-					throw new Error('\nError parsing JSON: ' + res);
-				}
-
-				if (!response.ok) {
-					if (response.status >= 400) {
-						document.getElementById("loginError").style.display = 'flex';
-						document.getElementById("loginError").textContent = res.message;
-					}
-					throw new Error("\n" + res.error + "\n" + res.message);
-				}
-
-				return res;
-			}).then(data => {
-				console.table(data);
-				if (data.message === 'Login successful')
-					window.location.href = 'home/rentCar.html';
-			}).catch(error => {
-				console.error('Fetch API -', error);
-			});
-		};
-
-
-	</script>
 
 	<style>
 		#loginError {

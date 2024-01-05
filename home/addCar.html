@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Add New Cars</title>
-	<!-- Add your CSS stylesheets or links here -->
+	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
 </head>
 
 <body>
@@ -33,12 +33,33 @@
 				required><br>
 
 			<div id="registerError"></div>
-
-			<input type="hidden" name="submitAction" value="submitCars">
 			<input type="submit" value="Add Car">
 		</form>
 	</div>
 	<style>
+		#registerError,
+		#passwordError {
+			display: none;
+			color: rgb(217, 48, 37);
+			align-self: center;
+			font-size: 12px;
+			transform: translateY(-10px);
+		}
+
+		:is(#registerError, #passwordError)::before {
+			content: '!';
+			color: white;
+			padding: 2px;
+			font-family: Carlito;
+			font-size: 0.8em;
+			margin-right: 5px;
+			width: 1.2em;
+			height: 1.2em;
+			border-radius: 50%;
+			background-color: rgb(217, 48, 37);
+			text-align: center;
+		}
+
 		br {
 			color: red;
 			/* display: none; */
@@ -64,46 +85,17 @@
 
 			let formData = new FormData(event.target);
 
-			fetch('../assets/dbHandling.php', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'X-Requested-With': 'fetch'
-				}
-			}).then(async response => {
-				if (response.redirected)
-					window.location.href = response.url;
+			const onFailure = (data) => {
+				document.getElementById("registerError").style.display = 'flex';
+				document.getElementById("registerError").textContent = data.message;
+			}
 
-				let res = await response.text();
-				try {
-					res = JSON.parse(res);
-				} catch (error) {
-					throw new Error('\nError parsing JSON: ' + res);
-				}
+			const onSuccess = (data) => {
+				window.location.href = window.location.origin + '/home/rentCar.html'
+			}
 
-				if (!response.ok) {
-					if (response.status >= 400) {
-						document.getElementById("registerError").style.display = 'flex';
-						document.getElementById("registerError").textContent = res.message;
-					}
-					throw new Error("\n" + res.error + "\n" + res.message);
-				}
-
-				return res;
-			}).then(data => {
-				console.table(data);
-				if (data.message === 'New car: "' + formData.get('licenseNumber') + '" recorded into Cars table successfully')
-					window.location.href = window.location.origin + '/home/rentCar.html'
-			}).catch(error => {
-				console.error('Fetch API -', error);
-			});
+			requestFetch('/api/Cars', 'POST', formData, onFailure, onSuccess);
 		}
-		const validateInput = (event, nregex) => {
-			event.target.value = event.target.value.replace(nregex, '');
-
-			if (event.target.name === 'licenseNumber')
-				event.target.value = event.target.value.replace(/[a-z]/g, (match) => match.toUpperCase())
-		};
 
 	</script>
 </body>

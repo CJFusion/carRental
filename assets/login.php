@@ -23,14 +23,10 @@ if ($result->num_rows > 1) {
 	http_response_code(200);
 	$response = [
 		'message' => 'Login successful'
-		// 'user_id' => '$userId', // Include any relevant user details like user ID
-		// 'token' => 'create_authentication_token_here' // Include the authentication token/session information for skipping auth
 	];
 
 	startSession();
-	if (isset($_SESSION['user']) && $_SESSION['user'] !== $username)
-	// unsetSession(); // TODO: 2. Create logout function call to destroy session and then restart session
-	{
+	if (isset($_SESSION['user']) && $_SESSION['user'] !== $username) {
 		destroySession();
 		startSession();
 	}
@@ -46,11 +42,9 @@ if ($result->num_rows > 1) {
 		'error' => 'Invalid credentials',
 		'message' => 'The username or password is incorrect'
 	];
-	
-	if (session_status() === PHP_SESSION_ACTIVE) {
-		session_unset();
+
+	if (session_status() === PHP_SESSION_ACTIVE)
 		destroySession();
-	}
 }
 
 $data += $response;
