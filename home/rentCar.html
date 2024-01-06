@@ -90,49 +90,11 @@
 
 	<script>
 
-		window.isCustomerLoggedIn = null;
-		const loadProfileOverlay = async () => {
-
-			const onFailure = (data) => {
-				// document.getElementById("registerError").style.display = 'flex';
-				// document.getElementById("registerError").textContent = data.message;
-			}
-
-			const onSuccess = (data) => {
-				return data;
-			}
-
-			let response = await requestFetch('/api/isCustomer', 'GET', {}, onFailure, onSuccess);
-
-			if (isCustomerLoggedIn = response.bool)
-				document.querySelectorAll('.agencyBtns').forEach(element => element.style.display = 'none');
-
-			displayCars();
-		}
-
-		const logout = requestFetch('/api/logout', 'GET', {}, () => { }, () => { });
+		const logout = () => requestFetch('/api/logout', 'GET', {}, () => { }, () => { });
 		// window.location.href = "/assets/logout.php";
 		// FIXME: 1. Create logout session php
 
 		const profileOpts = (htmlPage) => window.location.href = `./${htmlPage}`;
-
-		const getCarList = async () => {
-
-			//Filler Database Fetched Data
-			// return { "agencyId": { "2": { "carId": { "3": { "model": "Tesla Model S", "license_number": "MH 01 AB 1234", "capacity": "5", "rent_per_day": "600.00" }, "4": { "model": "Porsche Cayenne", "license_number": "DL 02 CD 5678", "capacity": "4", "rent_per_day": "550.00" }, "5": { "model": "Mercedes-Benz GLE", "license_number": "KA 05 EF 9012", "capacity": "5", "rent_per_day": "700.00" }, "6": { "model": "BMW X5", "license_number": "TN 06 GH 3456", "capacity": "4", "rent_per_day": "620.00" }, "7": { "model": "Audi Q7", "license_number": "UP 07 IJ 7890", "capacity": "5", "rent_per_day": "580.00" } } }, "11": { "carId": { "8": { "model": "Land Rover Range Rover", "license_number": "GJ 08 KL 1234", "capacity": "4", "rent_per_day": "800.00" }, "9": { "model": "Bentley Bentayga", "license_number": "MH 09 MN 5678", "capacity": "4", "rent_per_day": "900.00" }, "10": { "model": "Rolls-Royce Cullinan", "license_number": "UP 10 OP 9012", "capacity": "4", "rent_per_day": "850.00" }, "11": { "model": "Ferrari Portofino", "license_number": "DL 11 QR 3456", "capacity": "4", "rent_per_day": "1000.00" }, "12": { "model": "Lamborghini Urus", "license_number": "TN 12 ST 7890", "capacity": "4", "rent_per_day": "950.00" } } }, "13": { "carId": { "13": { "model": "Maserati Levante", "license_number": "KA 13 UV 1234", "capacity": "5", "rent_per_day": "750.00" }, "14": { "model": "Aston Martin DBX", "license_number": "MH 14 WX 5678", "capacity": "4", "rent_per_day": "700.00" }, "15": { "model": "McLaren GT", "license_number": "GJ 15 YZ 9012", "capacity": "5", "rent_per_day": "820.00" }, "16": { "model": "Bugatti Chiron", "license_number": "DL 16 AB 3456", "capacity": "5", "rent_per_day": "1500.00" }, "17": { "model": "Porsche 911 Turbo", "license_number": "TN 17 CD 7890", "capacity": "5", "rent_per_day": "1200.00" } } } } }
-
-
-			const onFailure = (data) => {
-				document.getElementById("registerError").style.display = 'flex';
-				document.getElementById("registerError").textContent = data.message;
-			}
-
-			const onSuccess = (data) => {
-				return data.availableCars;
-			}
-
-			return await requestFetch('/api/Cars', 'GET', {}, onFailure, onSuccess);
-		}
 
 		const addBooking = (event) => {
 			event.preventDefault();
@@ -150,6 +112,44 @@
 			requestFetch('/api/Bookings', 'POST', formData, onFailure, onSuccess);
 		}
 
+		window.isCustomerLoggedIn = null;
+		const loadProfileOverlay = async () => {
+
+			const onFailure = (data) => {
+				alert(data.message);
+				// document.getElementById("registerError").style.display = 'flex';
+				// document.getElementById("registerError").textContent = data.message;
+			}
+
+			const onSuccess = (data) => {
+				return Object.values(data['userId'])[0]['userType'] == 'customer';
+			}
+
+			let bool = await requestFetch('/api/Users/0', 'GET', {}, () => { }, onSuccess);
+
+			if (isCustomerLoggedIn = bool)
+				document.querySelectorAll('.agencyBtns').forEach(element => element.style.display = 'none');
+
+			displayCars();
+		}
+
+		const getCarList = async () => {
+
+			//Filler Database Fetched Data
+			//return { "agencyId": { "2": { "carId": { "3": { "model": "Tesla Model S", "licenseNumber": "MH 01 AB 1234", "capacity": "5", "rentPerDay": "600.00" }, "4": { "model": "Porsche Cayenne", "licenseNumber": "DL 02 CD 5678", "capacity": "4", "rentPerDay": "550.00" }, "5": { "model": "Mercedes-Benz GLE", "licenseNumber": "KA 05 EF 9012", "capacity": "5", "rentPerDay": "700.00" }, "6": { "model": "BMW X5", "licenseNumber": "TN 06 GH 3456", "capacity": "4", "rentPerDay": "620.00" }, "7": { "model": "Audi Q7", "licenseNumber": "UP 07 IJ 7890", "capacity": "5", "rentPerDay": "580.00" } } }, "11": { "carId": { "8": { "model": "Land Rover Range Rover", "licenseNumber": "GJ 08 KL 1234", "capacity": "4", "rentPerDay": "800.00" }, "9": { "model": "Bentley Bentayga", "licenseNumber": "MH 09 MN 5678", "capacity": "4", "rentPerDay": "900.00" }, "10": { "model": "Rolls-Royce Cullinan", "licenseNumber": "UP 10 OP 9012", "capacity": "4", "rentPerDay": "850.00" }, "11": { "model": "Ferrari Portofino", "licenseNumber": "DL 11 QR 3456", "capacity": "4", "rentPerDay": "1000.00" }, "12": { "model": "Lamborghini Urus", "licenseNumber": "TN 12 ST 7890", "capacity": "4", "rentPerDay": "950.00" } } }, "13": { "carId": { "13": { "model": "Maserati Levante", "licenseNumber": "KA 13 UV 1234", "capacity": "5", "rentPerDay": "750.00" }, "14": { "model": "Aston Martin DBX", "licenseNumber": "MH 14 WX 5678", "capacity": "4", "rentPerDay": "700.00" }, "15": { "model": "McLaren GT", "licenseNumber": "GJ 15 YZ 9012", "capacity": "5", "rentPerDay": "820.00" }, "16": { "model": "Bugatti Chiron", "licenseNumber": "DL 16 AB 3456", "capacity": "5", "rentPerDay": "1500.00" }, "17": { "model": "Porsche 911 Turbo", "licenseNumber": "TN 17 CD 7890", "capacity": "5", "rentPerDay": "1200.00" } } } } };
+
+			const onFailure = (data) => {
+				document.getElementById("registerError").style.display = 'flex';
+				document.getElementById("registerError").textContent = data.message;
+			}
+
+			const onSuccess = (data) => {
+				return data.availableCars;
+			}
+
+			return await requestFetch('/api/Cars', 'GET', {}, onFailure, onSuccess);
+		}
+
 		// Function to display available cars
 		async function displayCars() {
 			let getList = await getCarList();
@@ -164,24 +164,22 @@
 			carListDiv.innerHTML = ""; // Clear previous content
 
 			Object.values(getList.agencyId).forEach(function (agency) {
-				let car = agency.carId;
-				for (let key in car) {
-
+				Object.entries(agency.carId).forEach(([key, value]) => {
 					var carDetails = document.createElement("div");
 					carDetails.classList.add("gridItem");
 
 					carDetails.innerHTML = `
-						<h3>${car[key].model}</h3>
-						<p>License number: ${car[key].licenseNumber}</p>
-						<p>Seating capacity: ${car[key].capacity}</p>
-						<p>Rent/day: ${car[key].rentPerDay}</p>
+						<h3>${value.model}</h3>
+						<p>License number: ${value.licenseNumber}</p>
+						<p>Seating capacity: ${value.capacity}</p>
+						<p>Rent/day: ${value.rentPerDay}</p>
 					`;
 
 					if (isCustomerLoggedIn) {
 						let bookForm = document.createElement("form");
 						bookForm.setAttribute('onsubmit', 'addBooking(event)');
 						bookForm.setAttribute('class', 'bookForm');
-						// Object.assign(bookForm, { action: 'addBooking(event)', class: 'bookForm' });
+
 						bookForm.innerHTML = `
 							<input type="number" min="1" max="31" name="daysBooked" title="1 month booking max" required>
 
@@ -189,7 +187,8 @@
 							<select name="daysBooked" required>
 								<option value="1">1 day</option>
 								<option value="2">2 days</option>
-								<!-- Add more options as needed --><!--
+								<!-- Add more options as needed -->
+							<!--
 							</select>
 							-->
 
@@ -206,7 +205,7 @@
 					// carDetailsWrapper.appendChild(carDetails);
 
 					carListDiv.appendChild(carDetails);
-				}
+				})
 			});
 		}
 	</script>

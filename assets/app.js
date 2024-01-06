@@ -35,20 +35,6 @@ function selAccount(accountType) {
 	// closeOverlay(); // Close the overlay after selection (You can perform further actions here)
 }
 
-// Function to fetch data using AJAX
-function fetchDataFromUsersTable() {
-	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function () {
-		if (this.readyState == 4 && this.status == 200) {
-			var usersData = JSON.parse(this.responseText);
-			// Process the retrieved data
-			// E.g., display data in HTML elements
-		}
-	};
-	xhr.open("GET", "getUsers.php", true);
-	xhr.send();
-}
-
 function debugFetch(uri, requestMethod, formData, onFailure, onSuccess) {
 	let fetchOptions = { method: requestMethod, headers: { 'X-Requested-With': 'fetch' } };
 	if (requestMethod.toUpperCase() !== 'GET')
@@ -68,10 +54,9 @@ function debugFetch(uri, requestMethod, formData, onFailure, onSuccess) {
 			return res;
 		}).then(data => {
 			console.table(data);
-			if (!data.hasOwnProperty('error'))
-				return onSuccess(data);
-			else
+			if (data.hasOwnProperty('error'))
 				return onFailure(data);
+			return onSuccess(data);
 		}).catch(error => {
 			console.error('Fetch API -', error);
 		});
@@ -109,7 +94,7 @@ function loginAuth(event) {
 		window.location.href = 'home/rentCar.html';
 	}
 
-	requestFetch('assets/login.php', 'POST', formData, onFailure, onSuccess);
+	requestFetch('/api/login.php', 'POST', formData, onFailure, onSuccess);
 }
 
 const createAccAuth = (event, element) => {

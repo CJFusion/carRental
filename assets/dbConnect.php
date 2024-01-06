@@ -18,6 +18,5 @@ if (!$conn) {
 $response = "Connection successful";
 
 $GLOBALS['data'] = ["connStatus" => $response];
-// $data["connStatus"] = $response;
-// unset($response);
+unset($response);
 ?>

@@ -45,7 +45,7 @@
 
 			const onFailure = (data) => {
 				document.getElementById("registerError").style.display = 'flex';
-				document.getElementById("registerError").textContent = data.error;
+				document.getElementById("registerError").textContent = data.message;
 			}
 
 			const onSuccess = (data) => {
