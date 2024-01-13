@@ -39,10 +39,19 @@ function fulfilRequest()
 	// $data['url'] = $_SERVER['HTTP_HOST']; // returns domain name and port as well
 	// $data['url'] = $_SERVER['HTTP_REFERER']; // returns the entire url from which request was made
 
+	$contr = fetchController();
+	$contr->processRequest();
+	echo $contr->getJsonData();
+	$contr->close();
+}
+
+function fetchController()
+{
 	$endpoint = trim(str_replace('/api', '', $_SERVER['REQUEST_URI']), '/');
 	$segment = explode("/", $endpoint);
+	$name = strtolower($segment[0]);
 
-	if (!isset($segment[0]) && $segment[0] !== '') {
+	if (!isset($name) && $name !== '') {
 		http_response_code(400);
 		echo json_encode([
 			'error' => 'Invalid endpoint',
@@ -52,9 +61,14 @@ function fulfilRequest()
 	}
 
 	// All available controllers are added in this array
-	$case = ['Users', 'Cars', 'Bookings'];
+	$case = [
+		'users' => fn() => new UsersController(),
+		'cars' => fn() => new CarsController(),
+		'bookings' => fn() => new BookingsController(),
+		'images' => fn() => new ImagesController()
+	];
 
-	if (!in_array($segment[0], $case)) {
+	if (!array_key_exists(strtolower($name), $case)) {
 		http_response_code(404);
 		echo json_encode([
 			'error' => 'Invalid endpoint',
@@ -63,25 +77,17 @@ function fulfilRequest()
 		die();
 	}
 
-	$contr = fetchController(strtolower($segment[0]));
-	$contr->processRequest();
-	echo $contr->getJsonData();
-	$contr->close();
-}
-
-function fetchController($name)
-{
 	$file = __DIR__ . '/controllers/' . $name . '.contr.php';
 	if (!file_exists($file)) {
 		http_response_code(404);
 		echo json_encode([
 			'error' => 'Required resource',
-			'message' => 'Required controller file "' . $name . '.php" does not exist.'
+			'message' => 'Required controller file "' . ucfirst($name) . '.php" does not exist.'
 		]);
 		die();
 	}
 	require_once($file);
 
-	return new Controller();
+	return $case[$name]();
 }
 ?>

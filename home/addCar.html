@@ -5,18 +5,53 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Add New Cars</title>
+	<link rel="stylesheet" type="text/css" href="../assets/app.css">
 	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
 </head>
 
 <body>
-	<nav class="navBar flexCentered">
-		<div class="flexItem">
-			<h2>Add New Cars</h2>
-		</div>
-	</nav>
+	<header class="navBar flexCentered">
+		<nav class="navGrid">
+			<div class="gridItem flexCentered navBox">
+				<a class="fillBox" href="../home/rentCar.html"><img class="home" src="../assets/SVGs/house-solid.svg"
+						alt="Home Svg" /></a>
+			</div>
+			<div class="gridItem flexCentered">
+				<h2>Add a new car</h2>
+			</div>
+			<div class="gridItem flexCentered navBox">
+				<div id="rentPage_userIcon" role="button" class="userIcon"></div>
+				<div id="profileOverlay" class="profileOverlay" style="display: grid">
+
+					<div class="gridCol profileOverlayContents">
+
+						<p><img src="../assets/SVGs/man-svgrepo-com.svg" alt="Man Svg" />Josh Willington</p>
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('addCar.html')">
+							<img src="../assets/SVGs/solid/car.svg" alt="Car Svg" />Add cars</button>
+
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('viewRentals.html')">
+							<img src="../assets/SVGs/enter-icon.svg" alt="Cart Svg" />Login</button>
+
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('viewRentals.html')">
+							<img src="../assets/SVGs/user-add-svgrepo-com.svg" alt="Sigup Svg" />Signup</button>
+
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('viewRentals.html')">
+							<img src="../assets/SVGs/solid/cart-arrow-down.svg" alt="Cart Svg" />View
+							rentals</button>
+
+
+						<button classs="registerBtn" onclick="logout()">
+							<img src="../assets/SVGs/logout-svgrepo-com.svg" alt="Logout Svg" />Logout</button>
+					</div>
+
+				</div>
+			</div>
+		</nav>
+	</header>
 
 	<div class="grid">
-		<form id="addCar" onsubmit="return addCar(event)">
+		<!-- <form action="upload.php" method="post" enctype="multipart/form-data"> -->
+		<form id="postCarForm" method="POST" enctype="multipart/form-data" onsubmitss="return addCar(event)">
 			<label for="model">Model:</label>
 			<input type="text" id="model" name="model" oninput="validateInput(event, /[^a-zA-Z0-9- ]/g)" required><br>
 
@@ -32,11 +67,128 @@
 			<input type="number" id="rentPerDay" name="rentPerDay" min="1" oninput="validateInput(event, /[^0-9]/g)"
 				required><br>
 
+			<label for="imageInput">Images:</label>
+			<input type="file" id="imageInput" name="imageInput[]" accept="image/jpeg, image/png, image/jpg" multiple required><br>
+
 			<div id="registerError"></div>
 			<input type="submit" value="Add Car">
 		</form>
 	</div>
+
 	<style>
+		.gridCol {
+			display: grid;
+			grid-row: 1fr 1fr 1fr;
+			row-gap: 0.2rem;
+
+		}
+
+		.gridCol>button:first-of-type {
+			border-radius: 8px 8px 0px 0px;
+		}
+
+		:is(button, p)>img {
+			height: 1.1em;
+			aspect-ratio: 16/9;
+			padding-right: 0.25rem;
+			transform: translateY(2px);
+		}
+
+		.gridCol>p:has(~button) {
+			font-size: 1.1rem;
+			font-weight: 600;
+			text-align: left;
+			width: clamp(150px, 50svw, 200px);
+			word-wrap: break-word;
+			margin: 0.5rem 0;
+		}
+
+		.gridCol>button {
+			text-align: left;
+			width: clamp(150px, 50svw, 200px);
+			padding: 0.5rem;
+			padding-left: 0.5rem;
+			border-radius: 4px;
+		}
+
+		.gridCol>button:last-of-type {
+			border-radius: 0px 0px 8px 8px;
+		}
+
+		.profileOverlayContents {
+			position: absolute;
+			text-align: center;
+			right: 0%;
+			padding: 0.5rem;
+			width: max-content;
+			height: max-content;
+			border-radius: 10px;
+			background-color: #dbd3d3;
+		}
+
+
+
+
+
+
+		.navBar {
+			background-color: #788575;
+			box-shadow: 0 0 0.5rem rgba(0, 0, 0, 1);
+			margin-bottom: 1rem;
+		}
+
+		.navGrid {
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			padding: 0;
+			min-width: min(1100px, 100vw);
+			/* margin-bottom: 1rem; */
+			/* background-color: #788575; */
+			/* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 1); */
+			/* z-index: 1; */
+		}
+
+
+
+		.navGrid>.gridItem+.gridItem {
+			border-left: var(--pixelBorder);
+		}
+
+		.navBox {
+			font-size: var(--userIconSize);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: calc(calc(var(--userIconSize) * 8) + 8px);
+			aspect-ratio: 1;
+		}
+
+		.home {
+			height: calc(var(--userIconSize) * 4);
+			aspect-ratio: 4/3;
+			transition: transform .2s ease-in-out;
+		}
+
+		.home:hover {
+			transform: scale(1.1) translateY(3px);
+		}
+
+		.userIcon:hover~.profileOverlay,
+		.profileOverlay:hover {
+			display: flex;
+			animation: profileOverlayPop .3s ease-in-out forwards;
+		}
+
+		@keyframes profileOverlayPop {
+			0% {
+				opacity: 0;
+			}
+
+			100% {
+				opacity: 1;
+			}
+		}
+
 		#registerError,
 		#passwordError {
 			display: none;
@@ -59,6 +211,9 @@
 			background-color: rgb(217, 48, 37);
 			text-align: center;
 		}
+
+
+
 
 		br {
 			color: red;
@@ -97,6 +252,33 @@
 
 			requestFetch('/api/Cars', 'POST', formData, onFailure, onSuccess);
 		}
+
+
+
+
+
+
+		document.getElementById('postCarForm').addEventListener('submit', function (event) {
+			const fileInput = document.getElementById('imageInput');
+			const files = fileInput.files;
+			const minFiles = 1; // Minimum number of files
+			const maxFiles = 3; // Maximum number of files
+
+			if (files.length < minFiles || files.length > maxFiles) {
+				event.preventDefault(); // Prevent form submission
+				document.getElementById('registerError').style.display = "flex";
+				document.getElementById('registerError').innerHTML = `Select ${minFiles} to ${maxFiles} files.`;
+			}
+			else
+				addCar(event);
+		});
+
+
+
+
+
+
+
 
 	</script>
 </body>

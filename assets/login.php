@@ -6,7 +6,7 @@ require_once(dirname(__DIR__) . '/controllers/users.contr.php');
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-$contr = new Controller();
+$contr = new UsersController();
 $contr->setMethod('GET');
 $_POST['requireCode'] = true;
 $contr->setEndpoint('/api/Users/ByUsername/' . htmlspecialchars(trim($username)));
@@ -14,7 +14,7 @@ $foundUser = $contr->processRequest();
 if ($foundUser) {
 	$data = $contr->getData();
 	$row['userId'] = array_key_first($data['userId']);
-	$row += $data['userId'][$row['userId']];
+	$row = array_merge($row, $data['userId'][$row['userId']]);
 }
 
 unset($_POST['requireCode']);

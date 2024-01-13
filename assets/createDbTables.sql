@@ -53,6 +53,16 @@ CREATE TABLE Bookings (
 	FOREIGN KEY (agencyId) REFERENCES Users(userId)
 );
 
+CREATE TABLE Images (
+	imageId int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	userId INT NOT NULL,
+	carId INT DEFAULT NULL,
+	fileName varchar(100) NOT NULL,
+	uploadedOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (userId) REFERENCES Users(userId),
+    FOREIGN KEY (carId) REFERENCES Cars(carId)
+)
+
 -- // SQL file to be executed
 -- $sqlFile = 'path/to/your_sql_file.sql';
 

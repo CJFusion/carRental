@@ -1,6 +1,6 @@
 <?php
 
-function msqliConnect()
+function mysqliConnect()
 {
 	$servername = "localhost";
 	$username = "id21674326_marakrentals";
@@ -10,7 +10,7 @@ function msqliConnect()
 	return mysqli_connect($servername, $username, $password, $database);
 }
 
-$conn = msqliConnect();
+$conn = mysqliConnect();
 // Check connection
 if (!$conn) {
 	$response = "Connection failed";

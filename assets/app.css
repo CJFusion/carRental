@@ -1,5 +1,5 @@
 :root {
-	--pixelBorder: 1px solid #dadde1;
+	--pixelBorder: 1px solid #dadde18f;
 	--userIconSize: calc(0.4 * 1rem);
 }
 
@@ -10,11 +10,12 @@ body>div:last-of-type:has(a) {
 	pointer-events: none !important;
 }
 
-:is(body, html, h1, h2, h3, h4, h5, h6) {
+:is(body, html, h1, h2, h3, h4, h5, h6, p, div) {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font-family: Helvetica, Arial, sans-serif;
+	/* font-family: Helvetica, Arial, sans-serif; */
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",sans-serif;
 }
 
 button {
@@ -23,6 +24,12 @@ button {
 	border-radius: 8px;
 	border: 1px solid #ccc;
 	transition: background-color 0.3s ease-in-out;
+
+	>img {
+		height: 1.05rem;
+		padding-right: 0.25rem;
+		transform: translateY(20%);
+	}
 }
 
 .vertMargins {
@@ -44,6 +51,7 @@ button {
 .flexCentered {
 	display: flex;
 	position: relative;
+	/* flex-direction:row; */
 	justify-content: center;
 	align-items: center;
 }
@@ -55,13 +63,6 @@ button {
 
 .greyBg {
 	background-color: #f4f4f4;
-}
-
-.navBar {
-	padding: 0%;
-	background-color: #788575;
-	box-shadow: 0 0 0.5rem rgba(0, 0, 0, 1);
-	z-index: 1;
 }
 
 .flexItem:not(.occupyMin) {
@@ -190,19 +191,17 @@ button {
 .profileOverlay {
 	display: none;
 	position: relative;
-	/* Prfoile Icon has exact square dimension of 8em + 8px*/
-	top: calc(calc(var(--userIconSize) * -4) + (-4px));
-	right: calc(calc(var(--userIconSize) * 4) + 4px);
-	background-color: rgba(0, 0, 0, 0.2);
+	left: -50%;
+	/* background-color: rgba(0, 0, 0, 1); */
 }
 
 .profileOverlayContent {
 	position: absolute;
 	text-align: center;
-	top: 0%;
+	/* top: 0%; */
 	right: 0%;
-	padding: 20px;
-	width: min-content;
+	padding: 4px;
+	width: max-content;
 	height: max-content;
 	border-radius: 10px;
 	background-color: #dbd3d3;
@@ -240,16 +239,16 @@ button {
 
 /* #region User Profile Icon */
 .userIcon {
-	font-size: var(--userIconSize);
+	font-size: inherit;
 	/* float: left; */
 	margin: 1em;
 	border-radius: 50%;
-	border: 1.6px solid skyblue;
+	border: 1px solid skyblue;
 	height: 6em;
 	width: 6em;
 	background: none;
 	cursor: pointer;
-	padding: 2.4px;
+	padding: 3px;
 	transition: background-color 0.3s ease;
 }
 

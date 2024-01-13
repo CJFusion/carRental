@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-require_once(dirname(__DIR__) . '/models/cars.model.php');
+require_once(dirname(__DIR__) . '/models/images.model.php');
 
-class CarsController
+class ImagesController
 {
 	private array $data = [];
 	private string $method = '';
-	private CarsModel $model;
+	private ImagesModel $model;
 	private string $endpoint = '';
 
 	public function __construct()
 	{
-		$this->model = new CarsModel();
+		$this->model = new ImagesModel();
 		$this->method = $_SERVER['REQUEST_METHOD'];
-		$this->endpoint = trim(str_replace('/api/Cars', '', $_SERVER['REQUEST_URI']), '/');
+		$this->endpoint = trim(str_replace('/api/Images', '', $_SERVER['REQUEST_URI']), '/');
 	}
 
 	public function getJsonData(): bool|string
@@ -40,7 +40,7 @@ class CarsController
 
 	public function setEndpoint(string $endpoint): void
 	{
-		$this->endpoint = trim(str_replace('/api/Cars', '', $endpoint), '/');
+		$this->endpoint = trim(str_replace('/api/Images', '', $endpoint), '/');
 	}
 
 	public function processRequest(): bool
@@ -49,7 +49,7 @@ class CarsController
 
 		$model = $this->model;
 		$case = [
-			'POST' => fn() => $model->post(),
+			'POST' => fn() => $model->post($target),
 			'GET' => fn() => $model->get($target),
 		];
 		// 	'PUT' => fn() => $model->put(),
@@ -59,13 +59,12 @@ class CarsController
 		if (!array_key_exists($this->method, $case)) {
 			http_response_code(501);
 			$this->data['error'] = 'Method not implemented';
-				$this->data['message'] = 'Method "' . $this->method . '" was not implemented.';
+			$this->data['message'] = 'Method "' . $this->method . '" was not implemented.';
 			return false;
 		}
 
 		$state = $case[$this->method]();
 		$this->data = $model->getData();
-		
 		return $state;
 	}
 }

@@ -5,14 +5,14 @@ require_once(dirname(__DIR__) . '/assets/dbConnect.php');
 require_once(dirname(__DIR__) . '/assets/sessionConfig.php');
 require_once(dirname(__DIR__) . '/assets/sqlPrepare.php');
 
-class Model
+class UsersModel
 {
 	private array $data = [];
 	private mysqli|bool $conn;
 
 	public function __construct()
 	{
-		$conn = msqliConnect();
+		$conn = mysqliConnect();
 		if (!$conn) {
 			http_response_code(500);
 			echo json_encode(["error" => "MySql connection failed", "message" => $conn->error]);
@@ -63,16 +63,19 @@ class Model
 		$_SESSION['userType'] = htmlspecialchars(trim($userType));
 	}
 
+
+
+	// 	Supports the following endpoints:
+	// 		/api/Users/Agency	=> To post a single user under Agency category
+	// 		/api/Users/Customer	=> To post a single user under Customer category
 	public function post(string $userType): bool
 	{
 		$conn = $this->conn;
 		$username = $_POST['username'];
 		if ($this->usernameExists($conn, $username)) {
 			http_response_code(409);
-			$this->data += [
-				'error' => 'User already exists',
-				'message' => 'The username is already in use. Please choose a different one.'
-			];
+			$this->data['error'] = 'User already exists';
+			$this->data['message'] = 'The username is already in use. Please choose a different one.';
 
 			return false;
 		}
@@ -111,30 +114,25 @@ class Model
 				$this->initializeSessionDetails($username, $userId, $userType);
 
 				http_response_code(201);
-				$this->data += [
-					'message' => 'New user: "' . $username . '" recorded into Users table successfully',
-				];
+				$this->data['message'] = 'New user: "' . $username . '" recorded into Users table successfully';
 
 				return true;
 			}
 
 			http_response_code(500);
-			$this->data += [
-				"error" => ucfirst($userType) . " details creation failed",
-				"message" => "Failed query: " . $sql . " " . $conn->error
-			];
+			$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
+			$this->data["message"] = ucfirst($userType) . " details creation failed";
 
 			return false;
 		}
 
 		http_response_code(500);
-		$this->data += [
-			"error" => ucfirst($userType) . " account creation failed.",
-			"message" => "Failed query: " . $sql . " " . $conn->error
-		];
+		$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
+		$this->data["message"] = ucfirst($userType) . " account creation failed.";
 
 		return false;
 	}
+
 
 	private function getAllUsers($conn): bool
 	{
@@ -146,10 +144,8 @@ class Model
 
 		if ($customerSqlResult->num_rows < 1 && $agencySqlResult->num_rows < 1) {
 			http_response_code(404);
-			$this->data += [
-				"error" => "Failed queries: $customerSql \n\t $agencySql \n " . $conn->error,
-				"message" => 'There are no users reqistered'
-			];
+			$this->data["error"] = "Failed queries: $customerSql \n\t $agencySql \n " . $conn->error;
+			$this->data["message"] = 'There are no users reqistered';
 			return false;
 		}
 
@@ -176,10 +172,15 @@ class Model
 		return true;
 	}
 
+	// 	Supports the following endpoints:
+	// 		/api/Users			=> To get all users
+	// 		/api/Users/0		=> To get a single user who's currently logged in
+	// 		/api/Users/{int}	=> To get a single user by userId
+	// 		/api/Users/ByUsername				=> To get current logged in user by their username
+	// 		/api/Users/ByUsername/{string}		=> To get a user by their username
 	public function get(int|string|null $userId): bool
 	{
 		$conn = $this->conn;
-		$errMessage = 'User with name/id: "' . $userId . '" not found';
 
 		if ($userId === null)
 			return $this->getAllUsers($conn);
@@ -231,16 +232,24 @@ class Model
 
 			unset($_POST['requireCode']);
 
+			// The above loops would only execute once, as the Users table is expected to have only one record for each userId, its redundant
+			$userId = array_key_first($this->data['userId']);
+			$userType = $this->data['userId'][$userId]['userType'];
+			$table = ($userType == "customer") ? "User" : "Agency";
+			$sql = "SELECT * FROM " . $table . "Details WHERE " . $userType . "Id = \"$userId\"";
+			$sqlResult = $conn->query($sql);
+
+			$this->data['userId'][$userId] = array_merge($this->data['userId'][$userId], array_diff_key($sqlResult->fetch_assoc(), ['customerId' => '']));
+
 			http_response_code(200);
 			$this->data['message'] = "Fetched user's data successfully";
 			return true;
 		}
 
 		http_response_code(404);
-		$this->data += [
-			"error" => "Failed query: " . $sql . " " . $conn->error,
-			"message" => 'User with name/id: "' . $userId . '" not found'
-		];
+		$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
+		$this->data["message"] = 'User with name/id: "' . $userId . '" not found';
 		return false;
 	}
 }
+?>

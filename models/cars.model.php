@@ -4,15 +4,16 @@ declare(strict_types=1);
 require_once(dirname(__DIR__) . '/assets/dbConnect.php');
 require_once(dirname(__DIR__) . '/assets/sessionConfig.php');
 require_once(dirname(__DIR__) . '/assets/sqlPrepare.php');
+require_once(dirname(__DIR__) . '/controllers/images.contr.php');
 
-class Model
+class CarsModel
 {
 	private $data = [];
 	private mysqli|bool $conn;
 
 	public function __construct()
 	{
-		$conn = msqliConnect();
+		$conn = mysqliConnect();
 		if (!$conn) {
 			http_response_code(500);
 			echo json_encode(["error" => "MySql connection failed", "message" => $conn->error]);
@@ -51,6 +52,8 @@ class Model
 		return false;
 	}
 
+	// 	Supports the following endpoints:
+	// 		/api/Cars			=> To post a car under current logged in Agency
 	public function post(): bool
 	{
 		$conn = $this->conn;
@@ -60,13 +63,12 @@ class Model
 			require_once(dirname(__DIR__) . '/assets/logout.php');
 		$userId = $_SESSION['userId'];
 
+		// TODO: Implement a way to detect when car details were uploaded successfully, but the images failed to upload and bypass these checks and call image upload instead
 		$licenseNumber = $_POST['licenseNumber'];
 		if ($this->carExists($conn, $licenseNumber)) {
 			http_response_code(409);
-			$this->data += [
-				'error' => 'Car already exists',
-				'message' => 'A car with the same license number already exists. Please add a different one.'
-			];
+			$this->data['error'] = 'Car already exists';
+			$this->data['message'] = 'A car with the same license number already exists. Please add a different one.';
 
 			return false;
 		}
@@ -75,26 +77,41 @@ class Model
 		$capacity = $_POST['capacity'];
 		$rentPerDay = $_POST['rentPerDay'];
 
+		$conn->begin_transaction();
+
 		// Insert data into Cars Table
 		$sql = "INSERT INTO Cars (agencyId, capacity, rentPerDay, model, licenseNumber) VALUES (?, ?, ?, ?, ?)";
 		$stmtExec = executePreparedStatement($conn, $sql, "iidss", $userId, $capacity, $rentPerDay, $model, $licenseNumber);
 
-		if ($stmtExec->affected_rows === 1) {
-			http_response_code(201);
-			$this->data += ['message' => 'New car: "' . $licenseNumber . '" recorded into Cars table successfully'];
+		if ($stmtExec->affected_rows !== 1) {
+			http_response_code(500);
+			$this->data["error"] = "Car addition failed";
+			$this->data["message"] = "Failed query: " . $sql . " " . $conn->error;
 
-			return true;
+			return false;
 		}
 
-		http_response_code(500);
-		$this->data += [
-			"error" => "Car addition failed",
-			"message" => "Failed query: " . $sql . " " . $conn->error
-		];
+		$contr = new ImagesController();
+		$contr->setMethod('POST');
+		$contr->setEndpoint("/api/Images/CarId/$conn->insert_id");
+		if (!$contr->processRequest()) {
+			$conn->rollback();
 
-		return false;
+			$this->data = array_merge($this->data, $contr->getData());
+			return false;
+		}
+		$contr->close();
+
+		$conn->commit();
+		http_response_code(201);
+		$this->data['message'] = 'New car: "' . $licenseNumber . '" recorded into Cars table successfully';
+		return true;
 	}
 
+	// 	Supports the following endpoints:
+	// 		/api/Cars			=> To get all cars
+	// 		/api/Cars/{int}		=> To get a car by its carId
+	// 		/api/Cars/LicenseNumber/{string}	=> To get a car by its license number
 	public function get(int|string|null $carId): bool
 	{
 		$conn = $this->conn;
@@ -116,19 +133,28 @@ class Model
 
 		if ($sqlResult->num_rows < 1) {
 			http_response_code(404);
-			$this->data += [
-				"error" => "Failed query: " . $sql . " " . $conn->error,
-				"message" => ($carId === null) ? ('There are no cars listed in the Cars table.') : ('Car with id: "' . $carId . '" not found')
-			];
+			$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
+			$this->data["message"] = ($carId === null) ? ('There are no cars listed in the Cars table.') : ('Car with id: "' . $carId . '" not found');
 			return false;
 		}
 
-		while ($row = $sqlResult->fetch_assoc())
+		$contr = new ImagesController();
+		$contr->setMethod('GET');
+
+		while ($row = $sqlResult->fetch_assoc()) {
+			$contr->setEndpoint("/api/Images/CarId/Agency/" . $row['carId'] . "/" . $row['agencyId']);
+			if (!$contr->processRequest())
+				$imageUrl = ['imageUrl' => [0 => "/assets/SVGs/NotFound.png"]];
+			else
+				$imageUrl = array_intersect_key($contr->getData(), ['imageUrl' => '']);
+
 			$this->data['availableCars']['agencyId'][$row['agencyId']]['carId'][$row['carId']]
-				= array_diff_key($row, ['agencyId' => '', 'carId' => '']);
+				= array_diff_key($row, ['agencyId' => '', 'carId' => '']) + $imageUrl;
+		}
+		$contr->close();
 
 		http_response_code(200);
-		$this->data += ['message' => 'Cars list fetched successfully.'];
+		$this->data['message'] = 'Cars list fetched successfully.';
 		return true;
 	}
 }

@@ -4,18 +4,173 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>View Booked Cars</title>
-	<script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script>
+	<title>Booked Cars</title>
+	<!-- <link rel="stylesheet" type="text/css" href="../assets/fontawesome-free-6.5.1-web/css/all.min.css">
+	<script defer src="../assets/fontawesome-free-6.5.1-web/js/all.js"></script> -->
+	<link rel="stylesheet" type="text/css" href="../assets/app.css">
+	<script type="text/javascript" src="../assets/app.js"></script>
+	<!-- <script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script> -->
 </head>
 
 <body onload="displayBookedCars()">
-	<h2>View Booked Cars</h2>
+	<header class="navBar flexCentered">
+		<nav class="navGrid">
+			<div class="gridItem flexCentered navBox">
+				<a class="fillBox" href="../home/rentCar.html"><img class="home" src="../assets/SVGs/house-solid.svg"
+						alt="Home Svg" /></a>
+			</div>
+			<div class="gridItem flexCentered">
+				<h2>Booked Cars</h2>
+			</div>
+			<div class="gridItem flexCentered navBox">
+				<div id="rentPage_userIcon" role="button" class="userIcon"></div>
+				<div id="profileOverlay" class="profileOverlay" style="display: grid">
+
+					<div class="gridCol profileOverlayContents">
+
+						<p><img src="../assets/SVGs/man-svgrepo-com.svg" alt="Man Svg" />Josh Willington</p>
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('addCar.html')">
+							<img src="../assets/SVGs/solid/car.svg" alt="Car Svg" />Add cars</button>
+
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('viewRentals.html')">
+							<img src="../assets/SVGs/enter-icon.svg" alt="Cart Svg" />Login</button>
+
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('viewRentals.html')">
+							<img src="../assets/SVGs/user-add-svgrepo-com.svg" alt="Sigup Svg" />Signup</button>
+
+						<button classs="registerBtn agencyBtns" onclick="profileOpts('viewRentals.html')">
+							<img src="../assets/SVGs/solid/cart-arrow-down.svg" alt="Cart Svg" />View
+							rentals</button>
+
+
+						<button classs="registerBtn" onclick="logout()">
+							<img src="../assets/SVGs/logout-svgrepo-com.svg" alt="Logout Svg" />Logout</button>
+					</div>
+
+				</div>
+			</div>
+		</nav>
+	</header>
+
 	<div id="bookedCarsList">
 		<!-- Booked car details will be displayed here -->
 	</div>
 	<div id="registerError"></div>
 
 	<style>
+		.gridCol {
+			display: grid;
+			grid-row: 1fr 1fr 1fr;
+			row-gap: 0.2rem;
+
+		}
+
+		.gridCol>button:first-of-type {
+			border-radius: 8px 8px 0px 0px;
+		}
+
+		:is(button, p)>img {
+			height: 1.1em;
+			aspect-ratio: 16/9;
+			padding-right: 0.25rem;
+			transform: translateY(2px);
+		}
+
+		.gridCol>p:has(~button) {
+			font-size: 1.1rem;
+			font-weight: 600;
+			text-align: left;
+			width: clamp(150px, 50svw, 200px);
+			word-wrap: break-word;
+			margin: 0.5rem 0;
+		}
+
+		.gridCol>button {
+			text-align: left;
+			width: clamp(150px, 50svw, 200px);
+			padding: 0.5rem;
+			padding-left: 0.5rem;
+			border-radius: 4px;
+		}
+
+		.gridCol>button:last-of-type {
+			border-radius: 0px 0px 8px 8px;
+		}
+
+		.profileOverlayContents {
+			position: absolute;
+			text-align: center;
+			right: 0%;
+			padding: 0.5rem;
+			width: max-content;
+			height: max-content;
+			border-radius: 10px;
+			background-color: #dbd3d3;
+		}
+
+
+
+
+
+
+		.navBar {
+			background-color: #788575;
+			box-shadow: 0 0 0.5rem rgba(0, 0, 0, 1);
+			margin-bottom: 1rem;
+		}
+
+		.navGrid {
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			padding: 0;
+			min-width: min(1100px,100vw);
+			/* margin-bottom: 1rem; */
+			/* background-color: #788575; */
+			/* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 1); */
+			/* z-index: 1; */
+		}
+
+
+
+		.navGrid>.gridItem+.gridItem {
+			border-left: var(--pixelBorder);
+		}
+
+		.navBox {
+			font-size: var(--userIconSize);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: calc(calc(var(--userIconSize) * 8) + 8px);
+			aspect-ratio: 1;
+		}
+
+		.home {
+			height: calc(var(--userIconSize) * 4);
+			aspect-ratio: 4/3;
+			transition: transform .2s ease-in-out;
+		}
+
+		.home:hover {
+			transform: scale(1.1) translateY(3px);
+		}
+
+		.userIcon:hover~.profileOverlay,
+		.profileOverlay:hover {
+			display: flex;
+			animation: profileOverlayPop .3s ease-in-out forwards;
+		}
+
+		@keyframes profileOverlayPop {
+			0% {
+				opacity: 0;
+			}
+
+			100% {
+				opacity: 1;
+			}
+		}
+
 		#registerError,
 		#passwordError {
 			display: none;
@@ -38,10 +193,34 @@
 			background-color: rgb(217, 48, 37);
 			text-align: center;
 		}
+
+
+
+
+		br {
+			color: red;
+			/* display: none; */
+		}
+
+		input[type=number]::-webkit-inner-spin-button,
+		input[type=number]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			margin: 0;
+		}
+
+		input[type=number] {
+			-moz-appearance: textfield;
+			appearance: textfield;
+		}
 	</style>
 	<script>
 
 		const getBookingsList = async () => {
+
+			// Filler Data
+			return { "3": { "1": { "customerId": 1, "bookDate": "2023-01-01", "endDate": "2023-01-05", "customerName": "JoshWillington" }, "model": "Tesla Model S" }, "4": { "2": { "customerId": 1, "bookDate": "2023-02-01", "endDate": "2023-02-10", "customerName": "JoshWillington" }, "model": "Porsche Cayenne" }, "5": { "3": { "customerId": 1, "bookDate": "2023-03-01", "endDate": "2023-03-15", "customerName": "JoshWillington" }, "model": "Mercedes-Benz GLE" }, "6": { "4": { "customerId": 1, "bookDate": "2023-04-01", "endDate": "2023-04-20", "customerName": "JoshWillington" }, "model": "BMW X5" }, "7": { "5": { "customerId": 1, "bookDate": "2023-05-01", "endDate": "2023-05-25", "customerName": "JoshWillington" }, "model": "Audi Q7" } };
 
 			const onFailure = (data) => {
 				document.getElementById("registerError").style.display = 'flex';
@@ -49,7 +228,8 @@
 			}
 
 			const onSuccess = (data) => {
-				return data;
+				return data.carId;
+				// return data;
 			}
 
 			return await requestFetch('/api/Bookings/Agency', 'GET', {}, onFailure, onSuccess);
@@ -62,8 +242,8 @@
 			var bookedCarsListDiv = document.getElementById("bookedCarsList");
 			bookedCarsListDiv.innerHTML = ""; // Clear previous content
 
-			Object.values(bookingsList.carId).forEach(bookedCar => {
-
+			// Object.values(bookingsList.carId).forEach(bookedCar => {
+			Object.values(bookingsList).forEach(bookedCar => {
 				var carDetails = document.createElement("div");
 				carDetails.innerHTML = `
 				<h3>${bookedCar.model}</h3>

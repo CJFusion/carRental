@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 require_once(dirname(__DIR__) . '/models/users.model.php');
 
-class Controller
+class UsersController
 {
 	private array $data = [];
 	private string $method = '';
-	private Model $model;
+	private UsersModel $model;
 	private string $endpoint = '';
 
 	public function __construct()
 	{
-		$this->model = new Model();
+		$this->model = new UsersModel();
 		$this->method = $_SERVER['REQUEST_METHOD'];
 		$this->endpoint = trim(str_replace('/api/Users', '', $_SERVER['REQUEST_URI']), '/');
 	}
@@ -58,18 +58,15 @@ class Controller
 
 		if (!array_key_exists($this->method, $case)) {
 			http_response_code(501);
-			$this->data = [
-				'error' => 'Method not implemented',
-				'message' => 'Method "' . $this->method . '" was not implemented.'
-			];
+			$this->data['error'] = 'Method not implemented';
+			$this->data['message'] = 'Method "' . $this->method . '" was not implemented.';
 			return false;
 		}
 
-		$case[$this->method]();
+		$state = $case[$this->method]();
 		$this->data = $model->getData();
-		if (isset($this->data['error']))
-			return false;
-		return true;
+
+		return $state;
 	}
 }
 ?>

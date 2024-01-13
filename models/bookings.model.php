@@ -5,14 +5,14 @@ require_once(dirname(__DIR__) . '/assets/dbConnect.php');
 require_once(dirname(__DIR__) . '/assets/sessionConfig.php');
 require_once(dirname(__DIR__) . '/assets/sqlPrepare.php');
 
-class Model
+class BookingsModel
 {
 	private array $data = [];
 	private mysqli|bool $conn;
 
 	public function __construct()
 	{
-		$conn = msqliConnect();
+		$conn = mysqliConnect();
 		if (!$conn) {
 			http_response_code(500);
 			echo json_encode(["error" => "MySql connection failed", "message" => $conn->error]);
@@ -59,6 +59,8 @@ class Model
 		return false;
 	}
 
+	// 	Supports the following endpoints:
+	// 		/api/Bookings			=> To post a booking uner current logged in user
 	public function post(): bool
 	{
 		$conn = $this->conn;
@@ -71,10 +73,8 @@ class Model
 
 		if (!isset($_POST['carId']) && !isset($_POST['startDate']) && !isset($_POST['endDate'])) {
 			http_response_code(400);
-			$this->data += [
-				"error" => "Bad Request",
-				"message" => "All form fields for Bookings table are required!"
-			];
+			$this->data["error"] = "Bad Request";
+			$this->data["message"] = "All form fields for Bookings table are required!";
 
 			return false;
 		}
@@ -86,20 +86,16 @@ class Model
 
 		if ($startDate <= date('Y-m-d')) {
 			http_response_code(400); // FIXME: Should this inaccurate booking have an error assigned to it?
-			$this->data += [
-				"error" => "Bad request",
-				"message" => "Booking for today or a past date is not possible."
-			];
+			$this->data["error"] = "Bad request";
+			$this->data["message"] = "Booking for today or a past date is not possible.";
 
 			return false;
 		}
 
 		if ($bookedTillDate = $this->bookingExists($conn, $carId, $startDate)) {
 			http_response_code(409); // FIXME: Should this existing booking have an error assigned to it?
-			$this->data += [
-				"error" => "Booking conflict",
-				"message" => "This car has already been booked till " . date_format($bookedTillDate, "d/m/Y")
-			];
+			$this->data["error"] = "Booking conflict";
+			$this->data["message"] = "This car has already been booked till " . date_format($bookedTillDate, "d/m/Y");
 
 			return false;
 		}
@@ -117,20 +113,23 @@ class Model
 
 		if ($stmtExec->affected_rows === 1) {
 			http_response_code(201);
-			$this->data += ['message' => "New booking on carId: \"$carId\" with license number: \"$licenseNumber\" successful"];
+			$this->data['message'] = "New booking on carId: \"$carId\" with license number: \"$licenseNumber\" successful";
 
 			return true;
 		}
 
 		http_response_code(500);
-		$this->data += [
-			"error" => "Failed query: " . $sql . " " . $conn->error,
-			"message" => "Booking failed"
-		];
+		$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
+		$this->data["message"] = "Booking failed";
 
 		return false;
 	}
 
+	// 	Supports the following endpoints:
+	// 		/api/Bookings			=> To get all bookings
+	// 		/api/Bookings/{int}		=> To get a booking by its bookingsId
+	// 		/api/Bookings/Agency/{int}		=> To get all bookings made under agencyId 
+	// 		/api/Bookings/Customer/{int}	=> To get all bookings made under customerId
 	public function get(int|string|null $bookingId): bool
 	{
 		$conn = $this->conn;
@@ -176,16 +175,14 @@ class Model
 			}
 
 			http_response_code(200);
-			$this->data += ['message' => 'All booked cars list' . (isset($segment[1]) ? (' under ' . $segment[0] . 'Id: "' . $segment[1] . '"') : '') . ' fetched successfully.'];
+			$this->data['message'] = 'All booked cars list' . (isset($segment[1]) ? (' under ' . $segment[0] . 'Id: "' . $segment[1] . '"') : '') . ' fetched successfully.';
 
 			return true;
 		}
 
 		http_response_code(404);
-		$this->data += [
-			"error" => "Failed query: " . $sql . " " . $conn->error,
-			"message" => 'There are no cars booked' . (isset($segment[1]) ? (' under ' . $segment[0] . 'Id: "' . $segment[1] . '"') : '') . ' in the Bookings table.'
-		];
+		$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
+		$this->data["message"] = 'There are no cars booked' . (isset($segment[1]) ? (' under ' . $segment[0] . 'Id: "' . $segment[1] . '"') : '') . ' in the Bookings table.';
 
 		return false;
 	}
