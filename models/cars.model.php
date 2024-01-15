@@ -58,12 +58,10 @@ class CarsModel
 	{
 		$conn = $this->conn;
 
-		// FIXME: 12. Check if forced logout is necessary or not when user is not logged in
 		if (!$this->isLoggedIn())
 			require_once(dirname(__DIR__) . '/assets/logout.php');
 		$userId = $_SESSION['userId'];
 
-		// TODO: Implement a way to detect when car details were uploaded successfully, but the images failed to upload and bypass these checks and call image upload instead
 		$licenseNumber = $_POST['licenseNumber'];
 		if ($this->carExists($conn, $licenseNumber)) {
 			http_response_code(409);

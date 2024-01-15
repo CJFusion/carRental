@@ -45,12 +45,12 @@ class ImagesModel
 
 
 
-
+	// TODO: 1. Implement the following post request endpoints if necessary
+	//		/api/Images/CarId/{int}		=> To post an array of images for given carId under current logged in agency	
 	// 	Supports the following endpoints:
-	// TODO:		/api/Images			=> To post an array of images under current logged in user
-	// TODO:		/api/Images/{int}	=> To post an array of images under given userId
-	//		/api/Images/CarId/{int}		=> To post an array of images for given carId under current logged in agency
-	// TODO:		/api/Images/CarId/Agency/{int}/{int}	=> To post an array of images for given carId{@params_1} under agencyId{@params_2}
+	//		/api/Images			=> To post an array of images under current logged in user
+	//		/api/Images/{int}	=> To post an array of images under given userId
+	//		/api/Images/CarId/Agency/{int}/{int}	=> To post an array of images for given carId{@params_1} under agencyId{@params_2}
 	function post(int|string $target = NULL): bool
 	{
 		$conn = $this->conn;
@@ -145,14 +145,15 @@ class ImagesModel
 	}
 
 
+	// TODO: 2. Implement the following get request endpoints if necessary
+	//		/api/Images/Customer		=> To get an array of images of a logged in customer by customerId
+	//		/api/Images/Customer/{int}	=> To get an array of images of a customer by their customerId
+	//		/api/Images/Customers		=> To get arrays of images of all customers
+	//		/api/Images/Agency			=> To get an array of images of a logged in agency by agencyId
+	//		/api/Images/Agency/{int}	=> To get an array of images of a agency by agencyId
+	//		/api/Images/Agencies		=> To get arrays of images of all agencies
+	//		/api/Images/CarId/{int}		=> To get an array of images of a car by its carId under current logged in agency
 	// 	Supports the following endpoints:
-	// TODO:		/api/Images/Customer		=> To get an array of images of a logged in customer by customerId
-	// TODO:		/api/Images/Customer/{int}	=> To get an array of images of a customer by their customerId
-	// TODO:		/api/Images/Customers		=> To get arrays of images of all customers
-	// TODO:		/api/Images/Agency			=> To get an array of images of a logged in agency by agencyId
-	// TODO:		/api/Images/Agency/{int}	=> To get an array of images of a agency by agencyId
-	// TODO:		/api/Images/Agencies		=> To get arrays of images of all agencies
-	// TODO:		/api/Images/CarId/{int}		=> To get an array of images of a car by its carId under current logged in agency
 	//		/api/Images/CarId/Agency/{int}/{int}	=> To get an array of images of a car by its carId{@param_1} under given agencyId{@param_2}
 	function get(string $target): bool
 	{

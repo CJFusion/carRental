@@ -200,7 +200,6 @@ class UsersModel
 						return;
 					}
 
-					// FIXME: 16. Check if forced logout is necessary or not when user is not logged in
 					if (!$this->isLoggedIn())
 						require_once(dirname(__DIR__) . '/assets/logout.php');
 					$userId = $_SESSION['user'];
@@ -208,7 +207,6 @@ class UsersModel
 
 			'0' =>
 				function (&$userId) {
-					// FIXME: 17. Check if forced logout is necessary or not when user is not logged in
 					if (!$this->isLoggedIn())
 						require_once(dirname(__DIR__) . '/assets/logout.php');
 					$userId = $_SESSION['userId'];

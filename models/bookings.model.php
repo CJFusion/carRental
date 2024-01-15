@@ -65,7 +65,6 @@ class BookingsModel
 	{
 		$conn = $this->conn;
 
-		// FIXME: 13. Check if forced logout is necessary or not when user is not logged in
 		if (!$this->isLoggedIn())
 			require_once(dirname(__DIR__) . '/assets/logout.php');
 
@@ -85,7 +84,7 @@ class BookingsModel
 		$endDate = date('Y-m-d', strtotime($startDate . ' + ' . $daysBooked . ' days'));
 
 		if ($startDate <= date('Y-m-d')) {
-			http_response_code(400); // FIXME: Should this inaccurate booking have an error assigned to it?
+			http_response_code(400);
 			$this->data["error"] = "Bad request";
 			$this->data["message"] = "Booking for today or a past date is not possible.";
 
@@ -93,7 +92,7 @@ class BookingsModel
 		}
 
 		if ($bookedTillDate = $this->bookingExists($conn, $carId, $startDate)) {
-			http_response_code(409); // FIXME: Should this existing booking have an error assigned to it?
+			http_response_code(409);
 			$this->data["error"] = "Booking conflict";
 			$this->data["message"] = "This car has already been booked till " . date_format($bookedTillDate, "d/m/Y");
 
@@ -144,7 +143,6 @@ class BookingsModel
 
 			if (strtolower($segment[0]) === 'agency' || strtolower($segment[0]) === 'customer') {
 				if (!isset($segment[1])) {
-					// FIXME: 10. Check if forced logout is necessary or not when user is not logged in
 					if (!$this->isLoggedIn())
 						require_once(dirname(__DIR__) . '/assets/logout.php');
 					$segment[1] = $_SESSION['userId'];
@@ -160,19 +158,32 @@ class BookingsModel
 		}
 
 		if ($sqlResult->num_rows > 0) {
+
+			require_once(dirname(__DIR__) . '/controllers/images.contr.php');
+			$contr = new ImagesController();
+			$contr->setMethod('GET');
+
 			// Fetch each row from the result set
 			while ($row = $sqlResult->fetch_assoc()) {
-				$sql = 'SELECT username FROM Users WHERE BINARY userId = "' . $row['customerId'] . '"';
-				$nestedSqlResult = $conn->query($sql);
-				$row['customerName'] = $nestedSqlResult->fetch_assoc()['username'];
+				$sql = 'SELECT fullName FROM UserDetails WHERE customerId = "' . $row['customerId'] . '"';
+				$row['customerName'] = $conn->query($sql)->fetch_assoc()['fullName'];
 
-				$sql = 'SELECT model FROM Cars WHERE BINARY carId = "' . $row['carId'] . '"';
-				$nestedSqlResult = $conn->query($sql);
-
-				$this->data['carId'][$row['carId']]['model'] = $nestedSqlResult->fetch_assoc()['model'];
-				$this->data['carId'][$row['carId']][$row['bookingId']]
+				$this->data['carId'][$row['carId']]['bookingId'][$row['bookingId']]
 					= array_diff_key($row, ['carId' => '', 'bookingId' => '', 'agencyId' => '']);
+
+				if (!isset($this->data['carId'][$row['carId']]['model'])) {
+					$contr->setEndpoint("/api/Images/CarId/Agency/" . $row['carId'] . "/" . $row['agencyId']);
+					if (!$contr->processRequest())
+						$imageUrl = ['imageUrl' => [0 => "/assets/SVGs/NotFound.png"]];
+					else
+						$imageUrl = array_intersect_key($contr->getData(), ['imageUrl' => '']);
+
+					$sql = 'SELECT * FROM Cars WHERE BINARY carId = "' . $row['carId'] . '"';
+					$carDetails = array_diff_key($conn->query($sql)->fetch_assoc(), ['carId' => '', 'agencyId' => '']);
+					$this->data['carId'][$row['carId']] +=  $carDetails + $imageUrl;
+				}
 			}
+			$contr->close();
 
 			http_response_code(200);
 			$this->data['message'] = 'All booked cars list' . (isset($segment[1]) ? (' under ' . $segment[0] . 'Id: "' . $segment[1] . '"') : '') . ' fetched successfully.';
