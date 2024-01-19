@@ -1,34 +1,71 @@
 export function validateInput(event, nregex) { event.target.value = event.target.value.replace(nregex, ''); }
 
-export async function loadProfileOverlay(callBack = null) {
+export async function loadProfileOverlay() {
 
+	const isLoggedIn = await requestFetch('/api/Users/IsLoggedIn', 'GET', {}, () => { }, (data) => { return data.bool });
+
+	const profileOverlayContents = document.createElement('div');
+	profileOverlayContents.classList.add("gridRow", "profileOverlayContents");
+
+	if (isLoggedIn) {
+		profileOverlayContents.innerHTML = await loadProfileContents();
+	} else {
+		profileOverlayContents.innerHTML = `
+		<a href="${window.origin}/home/login.html" class="btn">
+			<img src="${window.origin}/assets/SVGs/enter-icon.svg" alt="Login Svg" />Login
+		</a>
+
+		${''
+		// <a href="#" class="btn">
+		// 	<img src="${window.origin}/assets/SVGs/user-add-svgrepo-com.svg" alt="Signup Svg" />Signup
+		// </a>
+		}
+	`;
+	}
+
+	profileOverlayContents.querySelector("#logoutBtn")?.addEventListener('click', () => logout());
+	document.getElementById("profileOverlay").appendChild(profileOverlayContents);
+}
+
+async function loadProfileContents() {
 	const onSuccess = (data) => {
-		let userData = Object.values(data['userId'])[0];
+		const userData = Object.values(data['userId'])[0];
 		return {
 			"fullName": userData.fullName,
-			"userType": userData.userType,
-			"gender": Object(userData).hasOwnProperty('gender') ? userData.gender : 'Male'
+			"userType": userData.userType.toLowerCase(),
+			"gender": Object(userData).hasOwnProperty('gender') ? userData.gender.toLowerCase() : 'male'
 		};
 	}
 
 	const userData = await requestFetch('/api/Users/0', 'GET', {}, () => { }, onSuccess);
-	displayUser(userData.fullName, userData.gender, userData.userType);
+	const svgSrc = (userData.gender.toLowerCase !== 'female') ? 'man' : 'woman';
 
-	if (callBack && typeof callBack === 'function')
-		callBack();
-}
-
-async function displayUser(fullName, gender, userType) {
-	if (userType.toLowerCase() === "customer")
-		document.querySelectorAll(".agencyBtn").forEach(element => element.remove());
-
-	const userField = document.getElementById("userField");
-	const svgSrc = gender !== 'Female' ? 'man' : 'woman';
-
-	userField.innerHTML = `
-		<img src="${window.origin}/assets/SVGs/${svgSrc}-svgrepo-com.svg" alt="${gender} Svg" />
-		${fullName}
+	const userFieldHtml = `
+		<p id="userField">
+			<img src="${window.origin}/assets/SVGs/${svgSrc}-svgrepo-com.svg" alt="${userData.gender} Svg" />
+			${userData.fullName}
+		</p>
 	`;
+	const addCarsHtml = ((userData.userType === 'customer') || (window.location.pathname === '/home/addCar.html')) ? '' :
+		`
+		<a href="${window.origin}/home/addCar.html" class="btn">
+			<img src="${window.origin}/assets/SVGs/solid/car.svg" alt="Car Svg" />Add cars
+		</a>
+	`;
+	const viewRentalsHtml = (window.location.pathname === '/home/viewRentals.html') ? '' :
+		`
+		<a href="${window.origin}/home/viewRentals.html" class="btn">
+			<img src="${window.origin}/assets/SVGs/solid/cart-arrow-down.svg" alt="Cart Svg" />View rentals
+		</a>
+	`;
+	const logoutBtnHtml = `
+		<button id="logoutBtn">
+			<img src="${window.origin}/assets/SVGs/logout-svgrepo-com.svg" alt="Logout Svg" />Logout
+		</button>
+	`;
+
+	const innerHtml = userFieldHtml + addCarsHtml + viewRentalsHtml + logoutBtnHtml;
+	return innerHtml;
 }
 
 export function toggle(elementId, className) {
@@ -129,7 +166,7 @@ export function createAccAuth(event) {
 
 	const onSuccess = (data) => {
 		alert(data.message + "\nRedirecting to main page...");
-		window.location.href = window.origin + '/home/rentCar.html';
+		window.location.href = window.origin;
 	}
 
 	requestFetch(`/api/Users/${userType}`, 'POST', formData, onFailure, onSuccess);

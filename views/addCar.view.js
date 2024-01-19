@@ -1,7 +1,6 @@
-import { toggle, logout, loadProfileOverlay, requestFetch, validateInput } from '../assets/app.js';
+import { toggle, loadProfileOverlay, requestFetch, validateInput } from './app.js';
 
 document.getElementById('profileBtn').addEventListener('click', () => toggle('profileOverlay', 'dispHidden'));
-document.getElementById('logoutBtn').addEventListener('click', () => logout());
 document.getElementById('model').addEventListener('input', (event) => validateInput(event, /[^a-zA-Z0-9- ]/g));
 document.getElementById('licenseNumber').addEventListener('input', (event) => validateLicenseNumber(event));
 document.getElementById('capacity').addEventListener('input', (event) => validateInput(event, /[^0-9]/g));
@@ -43,18 +42,10 @@ const addCar = (event) => {
 
 	const onSuccess = (data) => {
 		alert(data.message);
-		window.location.href = window.location.origin + '/home/rentCar.html'
+		window.location.href = window.origin;
 	}
 
 	requestFetch('/api/Cars', 'POST', formData, onFailure, onSuccess);
 }
 
-window.document.addEventListener('DOMContentLoaded', function () {
-	console.log('DOMContentLoaded event fired. HTML content is fully loaded.');
-});
-
-window.addEventListener('load', function () {
-	console.log('load event fired. All external resources are fully loaded.');
-
-	loadProfileOverlay();
-});
+window.document.addEventListener('DOMContentLoaded', () =>	loadProfileOverlay());

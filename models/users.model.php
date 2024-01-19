@@ -92,7 +92,7 @@ class UsersModel
 		$addressState = $_POST['addressState'];
 
 		$passHash = password_hash($password, PASSWORD_DEFAULT);
-		
+
 		$conn->begin_transaction();
 		$sql = "INSERT INTO Users (username, password, email, userType) VALUES (?, ?, ?, ?)";
 		$stmtExec = executePreparedStatement($conn, $sql, "ssss", $username, $passHash, $email, $userType);
@@ -185,6 +185,7 @@ class UsersModel
 	// 	Supports the following endpoints:
 	// 		/api/Users			=> To get all users
 	// 		/api/Users/0		=> To get a single user who's currently logged in
+	// 		/api/Users/IsLoggedIn	=> To check whether a user is logged in or not
 	// 		/api/Users/{int}	=> To get a single user by userId
 	// 		/api/Users/ByUsername				=> To get current logged in user by their username
 	// 		/api/Users/ByUsername/{string}		=> To get a user by their username
@@ -207,25 +208,40 @@ class UsersModel
 					$username = explode('/', $userId)[1] ?? '';
 					if (strlen((string) $username) > 0) {
 						$userId = $username;
-						return;
+						return false;
 					}
 
 					if (!$this->isLoggedIn())
 						require_once(dirname(__DIR__) . '/assets/logout.php');
 					$userId = $_SESSION['user'];
+					return false;
+				},
+
+			'isloggedin' =>
+				function () {
+					$bool = $this->isLoggedIn();
+
+					http_response_code(200);
+					$this->data["message"] = "User is currently " . (($bool)? (""): ("not ")) . "logged in.";
+					$this->data["bool"] = $bool;
+					return true;
 				},
 
 			'0' =>
 				function (&$userId) {
 					if (!$this->isLoggedIn())
-						require_once(dirname(__DIR__) . '/assets/logout.php');
+						return true;
 					$userId = $_SESSION['userId'];
+					return false;
 				}
 		];
 
 		$segment = explode('/', trim(strtolower($userId), '/'))[0];
 		if (array_key_exists($segment, $case))
-			$case[$segment]($userId, $sql, $types);
+			$redirect = $case[$segment]($userId, $sql, $types);
+
+		if($redirect)
+			return true;
 
 		$stmtExec = executePreparedStatement($conn, $sql, $types, $userId);
 		$sqlResult = $stmtExec->get_result();

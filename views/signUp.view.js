@@ -1,4 +1,4 @@
-import { validateInput, passMatch, createAccAuth } from '../assets/app.js';
+import { validateInput, passMatch, createAccAuth } from './app.js';
 
 document.getElementById('username').addEventListener('input', (event) => validateInput(event, /[^a-zA-Z0-9]/g));
 

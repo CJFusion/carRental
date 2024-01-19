@@ -50,7 +50,7 @@ class BookingsModel
 
 	private function bookingExists(mysqli $conn, int $carId, string $newBookDate): DateTime|bool
 	{
-		$sql = "SELECT endDate FROM Bookings WHERE carId = ?";
+		$sql = "SELECT endDate FROM Bookings WHERE carId = ? ORDER BY endDate DESC";
 		$stmtExec = executePreparedStatement($conn, $sql, "i", $carId);
 		$sqlResult = $stmtExec->get_result();
 
@@ -89,10 +89,13 @@ class BookingsModel
 		$daysBooked = $_POST['daysBooked'];
 		$endDate = date('Y-m-d', strtotime($startDate . ' + ' . $daysBooked . ' days'));
 
-		if ($startDate <= date('Y-m-d')) {
+		$oneYear = date('Y-m-d', strtotime('+1 year'));
+		if ($startDate <= date('Y-m-d') || $startDate > $oneYear) {
 			http_response_code(400);
 			$this->data["error"] = "Bad request";
 			$this->data["message"] = "Booking for today or a past date is not possible.";
+			if($startDate > $oneYear)
+			$this->data["message"] = "Please book within one year's period.";
 
 			return false;
 		}
@@ -186,7 +189,7 @@ class BookingsModel
 
 					$sql = 'SELECT * FROM Cars WHERE BINARY carId = "' . $row['carId'] . '"';
 					$carDetails = array_diff_key($conn->query($sql)->fetch_assoc(), ['carId' => '', 'agencyId' => '']);
-					$this->data['carId'][$row['carId']] +=  $carDetails + $imageUrl;
+					$this->data['carId'][$row['carId']] += $carDetails + $imageUrl;
 				}
 			}
 			$contr->close();

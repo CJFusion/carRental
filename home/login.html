@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login</title>
+	<!-- <link rel="stylesheet" type="text/css" href="../assets/app.css"> -->
+	<link rel="stylesheet" type="text/css" href="../assets/app.css">
+	<script type="module" src="../views/login.view.js"></script>
+	<!-- <script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script> -->
+</head>
+
+<body class="flexCentered maxViewPort bgColor">
+	<!-- Main Content -->
+	<div class="container">
+		<form id="loginForm">
+			<input type="text" name="username" placeholder="Username" required>
+			<input type="password" name="password" placeholder="Password" required>
+			<div id="errorContainer" class="dispHidden">Login failed</div>
+			<input type="submit" class="blueBtn btn" value="Login">
+		</form>
+		<div class="hrule"></div>
+		<button id="overlayOpenBtn" class="greenBtn btn">Create new account</button>
+	</div>
+
+	<!-- Overlay content -->
+	<div id="overlay" class="maxViewPort dispHidden">
+		<div class="overlayContent">
+			<span id="overlayCloseBtn" class="closeBtn">&times;</span>
+			<h3>Choose account type</h3>
+			<span class="userSelect">
+				<a href="../signUp/registerCustomer.html" class="registerBtn btn">Customer</a>
+				<a href="../signUp/registerAgency.html" class="registerBtn btn">Rental Agency</a>
+			</span>
+		</div>
+	</div>
+</body>
+
+</html>

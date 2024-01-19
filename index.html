@@ -8,40 +8,56 @@
 	<meta name="author" content="Mr. Audrian K Marak">
 	<meta name="Linkedin profile" content="www.linkedin.com/in/audrian-marak-tec23">
 
-	<!--<meta name="description " -->
-	<!--content="A better place to learn computer science"> -->
-	<!-- to explain about website in few words -->
+	<meta name="description"
+	content="A car rental service for both customer's and agencies. A simple full stack website project developed using MVC model and RESTful principles, languages used: HTML, CSS, JS, PHP, MySql.">
 
-	<title>Login Page</title>
+	<title>Available Cars</title>
 
-	<link rel="stylesheet" type="text/css" href="assets/app.css">
+	<link rel="stylesheet" type="text/css" href="assets/home.css">
 	<script type="module" src="views/index.view.js"></script>
 </head>
 
-<body class="flexCentered maxViewPort bgColor">
-	<!-- Main Content -->
-	<div class="container">
-		<form id="loginForm">
-			<input type="text" name="username" placeholder="Username" required>
-			<input type="password" name="password" placeholder="Password" required>
-			<div id="errorContainer" class="dispHidden">Login failed</div>
-			<input type="submit" class="blueBtn btn" value="Login">
-		</form>
-		<div class="hrule"></div>
-		<button id="overlayOpenBtn" class="greenBtn btn">Create new account</button>
-	</div>
 
-	<!-- Overlay content -->
-	<div id="overlay" class="maxViewPort dispHidden">
-		<div class="overlayContent">
-			<span id="overlayCloseBtn" class="closeBtn">&times;</span>
-			<h3>Choose account type</h3>
-			<span class="userSelect">
-				<a href="signUp/registerCustomer.html" class="registerBtn btn">Customer</a>
-				<a href="signUp/registerAgency.html" class="registerBtn btn">Rental Agency</a>
-			</span>
+<body class="bgColor">
+
+	<nav class="navGrid">
+		<div class="gridItem navBox">
+			<a href="index.html"><img class="home" src="../assets/SVGs/house-solid.svg" alt="Home Svg" /></a>
+		</div>
+		<div class="gridItem">
+			<h2>Rent a car</h2>
+		</div>
+		<div class="gridItem">
+			<button id="profileBtn" class="profileBtn btn">
+				<img class="home" src="../assets/SVGs/user-circle-svgrepo-com.svg" alt="User profile Svg" />
+			</button>
+
+			<div id="profileOverlay" class="dispHidden"></div>
+		</div>
+	</nav>
+
+	<div id="carList" class="productGrid">
+		<!-- Car details will be displayed here -->
+		<div id="loadingContainer">
+			<div class="circularLoader">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
 		</div>
 	</div>
+
+	<div id="errorContainer" class="dispHidden"></div>
+
 </body>
 
 </html>

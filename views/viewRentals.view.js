@@ -1,8 +1,7 @@
-import { toggle, logout, loadProfileOverlay, requestFetch, handleImageLoad, changeImage } from '../assets/app.js';
+import { toggle, loadProfileOverlay, requestFetch, handleImageLoad, changeImage } from './app.js';
 
 window.addEventListener('resize', () => changeItemDisplay());
 document.getElementById('profileBtn').addEventListener('click', () => toggle('profileOverlay', 'dispHidden'));
-document.getElementById('logoutBtn').addEventListener('click', () => logout());
 document.getElementById('prevItemBtn').addEventListener('click', () => changeItem(-1));
 document.getElementById('nextItemBtn').addEventListener('click', () => changeItem(1));
 
@@ -159,12 +158,5 @@ const displayBookedCars = async () => {
 	changeItemDisplay();
 }
 
-window.document.addEventListener('DOMContentLoaded', function () {
-	console.log('DOMContentLoaded event fired. HTML content is fully loaded.');
-});
-
-window.addEventListener('load', function () {
-	console.log('load event fired. All external resources are fully loaded.');
-
-	loadProfileOverlay(displayBookedCars);
-});
+window.document.addEventListener('DOMContentLoaded', () => loadProfileOverlay());
+window.addEventListener('load', () => displayBookedCars());
