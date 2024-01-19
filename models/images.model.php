@@ -22,6 +22,12 @@ class ImagesModel
 		$this->conn = $conn;
 	}
 
+	public function setConn(mysqli $conn): void
+	{
+		$this->conn->close();
+		$this->conn = $conn;
+	}
+
 	public function getData(): array
 	{
 		return $this->data;
@@ -56,9 +62,9 @@ class ImagesModel
 		$conn = $this->conn;
 
 		if (strpos(strtolower($target), "carid") === 0) {
-			$carId = array_slice(explode("/", $target), 1);
+			$carId = (int) array_slice(explode("/", $target), 1)[0];
 
-			if (!isset($carId[0])) {
+			if (!isset($carId)) {
 				http_response_code(500);
 				$this->data["error"] = "Invalid endpoint request";
 				$this->data["message"] = "carId not set for current resource request";
@@ -122,6 +128,7 @@ class ImagesModel
 				// Insert image file name into database 
 				$sql = "INSERT INTO Images (userId, carId, fileName) VALUES (?, ?, ?)";
 				$stmtExec = executePreparedStatement($conn, $sql, "iis", $userId, $carId, $fileName);
+
 
 				if ($stmtExec->affected_rows !== 1) {
 					http_response_code(500);

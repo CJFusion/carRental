@@ -1,41 +1,68 @@
-function openOverlay() {
-	document.getElementById("overlay").style.display = "flex";
-}
+export function validateInput(event, nregex) { event.target.value = event.target.value.replace(nregex, ''); }
 
-function closeOverlay() {
-	document.getElementById("overlay").style.display = "none";
-}
+export async function loadProfileOverlay(callBack = null) {
 
-function onInput(event, nregex) { event.target.value = event.target.value.replace(nregex, ''); }
-
-function validateInput(event, nregex) {
-	event.target.value = event.target.value.replace(nregex, '');
-	if (event.target.name === 'licenseNumber')
-		event.target.value = event.target.value.replace(/[a-z]/g, (match) => match.toUpperCase());
-}
-
-function sleep(delay) { new Promise((resolve) => setTimeout(resolve, delay)); }
-
-function openProfileOverlay() {
-	if (document.getElementById("profileOverlay").style.display == "none")
-		document.getElementById("profileOverlay").style.display = "flex";
-	else
-		document.getElementById("profileOverlay").style.display = "none";
-}
-
-function selAccount(accountType) {
-	if (accountType === 'customer') {
-		// redirectToRegistrationPage(accountType) 
-		window.location.href = 'signUp/registerCustomer.html';
-	} else if (accountType === 'rentalAgency') {
-		// redirectToRegistrationPage(accountType)
-		window.location.href = 'signUp/registerAgency.html';
+	const onSuccess = (data) => {
+		let userData = Object.values(data['userId'])[0];
+		return {
+			"fullName": userData.fullName,
+			"userType": userData.userType,
+			"gender": Object(userData).hasOwnProperty('gender') ? userData.gender : 'Male'
+		};
 	}
-	// alert("Selected account type: " + accountType);
-	// closeOverlay(); // Close the overlay after selection (You can perform further actions here)
+
+	const userData = await requestFetch('/api/Users/0', 'GET', {}, () => { }, onSuccess);
+	displayUser(userData.fullName, userData.gender, userData.userType);
+
+	if (callBack && typeof callBack === 'function')
+		callBack();
 }
 
-function debugFetch(uri, requestMethod, formData, onFailure, onSuccess) {
+async function displayUser(fullName, gender, userType) {
+	if (userType.toLowerCase() === "customer")
+		document.querySelectorAll(".agencyBtn").forEach(element => element.remove());
+
+	const userField = document.getElementById("userField");
+	const svgSrc = gender !== 'Female' ? 'man' : 'woman';
+
+	userField.innerHTML = `
+		<img src="${window.origin}/assets/SVGs/${svgSrc}-svgrepo-com.svg" alt="${gender} Svg" />
+		${fullName}
+	`;
+}
+
+export function toggle(elementId, className) {
+	const element = document.getElementById(elementId);
+	if (element)
+		element.classList.toggle(className);
+}
+
+export function handleImageLoad(elementId) {
+	document.getElementById("loadingContainer_" + elementId).classList.add('dispHidden');
+	document.getElementById("item_" + elementId).classList.remove('opacityHidden');
+}
+
+export function changeImage(step, elementId) {
+	const displayedImage = document.getElementById("item_" + elementId);
+
+	let currentIndex = parseInt(displayedImage.getAttribute('data-index'));
+	const imageUrls = JSON.parse(displayedImage.getAttribute('data-src'));
+
+	currentIndex += step;
+
+	if (currentIndex < 0)
+		currentIndex = imageUrls.length - 1;
+	else if (currentIndex >= imageUrls.length)
+		currentIndex = 0;
+
+	document.getElementById("loadingContainer_" + elementId).classList.remove('dispHidden');
+	displayedImage.classList.add('opacityHidden');
+
+	displayedImage.src = "" + imageUrls[currentIndex];
+	displayedImage.setAttribute('data-index', currentIndex);
+}
+
+export async function debugFetch(uri, requestMethod, formData, onFailure, onSuccess) {
 	let fetchOptions = { method: requestMethod, headers: { 'X-Requested-With': 'fetch' } };
 	if (requestMethod.toUpperCase() !== 'GET')
 		fetchOptions.body = formData;
@@ -62,7 +89,7 @@ function debugFetch(uri, requestMethod, formData, onFailure, onSuccess) {
 		});
 }
 
-function requestFetch(uri, requestMethod, formData, onFailure, onSuccess) {
+export async function requestFetch(uri, requestMethod, formData, onFailure, onSuccess) {
 	let fetchOptions = { method: requestMethod, headers: { 'X-Requested-With': 'fetch' } };
 	if (requestMethod.toUpperCase() !== 'GET')
 		fetchOptions.body = formData;
@@ -75,62 +102,44 @@ function requestFetch(uri, requestMethod, formData, onFailure, onSuccess) {
 		}).then(data => {
 			if (!data.hasOwnProperty('error'))
 				return onSuccess(data);
-			else
-				return onFailure(data);
+			return onFailure(data);
 		});
 }
 
-function loginAuth(event) {
-	event.preventDefault();
-
-	var formData = new FormData(event.target);
-
-	const onFailure = (data) => {
-		document.getElementById("loginError").style.display = 'flex';
-		document.getElementById("loginError").textContent = data.message;
-	}
-
-	const onSuccess = (data) => {
-		window.location.href = 'home/rentCar.html';
-	}
-
-	requestFetch('/api/login.php', 'POST', formData, onFailure, onSuccess);
+export function logout() {
+	requestFetch('/api/logout', 'GET', {}, () => { }, () => { });
 }
 
-const createAccAuth = (event, element) => {
+export function createAccAuth(event) {
+	if (!passMatch(event)) {
+		document.getElementById("confirmPassword").focus();
+		return;
+	}
+
 	let userType = 'Customer';
-	if (element !== null)
+	if (document.getElementById('agencyName'))
 		userType = 'Agency';
 
-	let formData = new FormData(event.target);
+	const formData = new FormData(event.target);
 
 	const onFailure = (data) => {
-		document.getElementById("registerError").style.display = 'flex';
-		document.getElementById("registerError").textContent = data.message;
+		document.getElementById("errorContainer").classList.remove('dispHidden');
+		document.getElementById("errorContainer").textContent = data.message;
 	}
 
 	const onSuccess = (data) => {
-		window.location.href = '../home/rentCar.html';
+		alert(data.message + "\nRedirecting to main page...");
+		window.location.href = window.origin + '/home/rentCar.html';
 	}
 
 	requestFetch(`/api/Users/${userType}`, 'POST', formData, onFailure, onSuccess);
 }
 
-function passMatch(event) {
+export function passMatch(event) {
 	event.preventDefault();
-	let property = 'none';
-	if (!(document.getElementById("password").value === document.getElementById("confirmPassword").value))
-		property = 'flex';
-	document.getElementById("passwordError").style.display = property;
 
-	if (!event.submitter)
-		return;
+	const bool = (document.getElementById("password").value === document.getElementById("confirmPassword").value);
+	document.getElementById("passwordError").classList.toggle('dispHidden', bool);
 
-	if (property !== 'none') {
-		document.getElementById("confirmPassword").focus();
-		return;
-	}
-
-	const element = document.getElementById('agencyName');
-	createAccAuth(event, element);
+	return bool;
 }

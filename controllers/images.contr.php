@@ -32,6 +32,11 @@ class ImagesController
 		$this->model->close();
 		unset($this->model);
 	}
+	
+	public function setConn(mysqli $conn): void
+	{
+		$this->model->setConn($conn);
+	}
 
 	public function setMethod(string $method): void
 	{

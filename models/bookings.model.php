@@ -22,6 +22,12 @@ class BookingsModel
 		$this->conn = $conn;
 	}
 
+	public function setConn(mysqli $conn): void
+	{
+		$this->conn->close();
+		$this->conn = $conn;
+	}
+
 	public function getData(): array
 	{
 		return $this->data;

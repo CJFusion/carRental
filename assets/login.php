@@ -2,6 +2,15 @@
 require_once(__DIR__ . '/sessionConfig.php');
 require_once(dirname(__DIR__) . '/controllers/users.contr.php');
 
+if (!isset($_POST['username']) || !isset($_POST['password'])) {
+	http_response_code(401);
+	echo json_encode([
+		'error' => 'Invalid Login',
+		'message' => "Login username or password wasn't provided"
+	]);
+	exit;
+}
+
 // Get the username and password from the form
 $username = $_POST['username'];
 $password = $_POST['password'];

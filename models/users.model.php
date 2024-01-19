@@ -22,6 +22,12 @@ class UsersModel
 		$this->conn = $conn;
 	}
 
+	public function setConn(mysqli $conn): void
+	{
+		$this->conn->close();
+		$this->conn = $conn;
+	}
+
 	public function getData(): array
 	{
 		return $this->data;
@@ -63,8 +69,6 @@ class UsersModel
 		$_SESSION['userType'] = htmlspecialchars(trim($userType));
 	}
 
-
-
 	// 	Supports the following endpoints:
 	// 		/api/Users/Agency	=> To post a single user under Agency category
 	// 		/api/Users/Customer	=> To post a single user under Customer category
@@ -88,36 +92,40 @@ class UsersModel
 		$addressState = $_POST['addressState'];
 
 		$passHash = password_hash($password, PASSWORD_DEFAULT);
-
+		
+		$conn->begin_transaction();
 		$sql = "INSERT INTO Users (username, password, email, userType) VALUES (?, ?, ?, ?)";
 		$stmtExec = executePreparedStatement($conn, $sql, "ssss", $username, $passHash, $email, $userType);
 
-		if ($stmtExec->affected_rows === 1) {
-			$userId = $conn->insert_id;
+		if ($stmtExec->affected_rows !== 1) {
+			$conn->rollback();
 
-			if (strtolower($userType) == 'customer') {
-				$dob = $_POST['dob'];
-				$gender = $_POST['gender'];
+			http_response_code(500);
+			$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
+			$this->data["message"] = ucfirst($userType) . " account creation failed.";
 
-				$sql = "INSERT INTO UserDetails(customerId, phone, fullName, dob, gender, addressState) 
+			return false;
+		}
+
+		$userId = $conn->insert_id;
+
+		if (strtolower($userType) == 'customer') {
+			$dob = $_POST['dob'];
+			$gender = $_POST['gender'];
+
+			$sql = "INSERT INTO UserDetails(customerId, phone, fullName, dob, gender, addressState) 
                 VALUES (?, ?, ?, ?, ?, ?)";
-				$stmtExec = executePreparedStatement($conn, $sql, "iissss", $userId, $phone, $fullName, $dob, $gender, $addressState);
-			} else {
-				$agencyName = $_POST["agencyName"];
+			$stmtExec = executePreparedStatement($conn, $sql, "iissss", $userId, $phone, $fullName, $dob, $gender, $addressState);
+		} else {
+			$agencyName = $_POST["agencyName"];
 
-				$sql = "INSERT INTO AgencyDetails(agencyId, phone, agencyName, fullName, addressState) 
+			$sql = "INSERT INTO AgencyDetails(agencyId, phone, agencyName, fullName, addressState) 
                 VALUES (?, ?, ?, ?, ?)";
-				$stmtExec = executePreparedStatement($conn, $sql, "iisss", $userId, $phone, $agencyName, $fullName, $addressState);
-			}
+			$stmtExec = executePreparedStatement($conn, $sql, "iisss", $userId, $phone, $agencyName, $fullName, $addressState);
+		}
 
-			if ($stmtExec->affected_rows === 1) {
-				$this->initializeSessionDetails($username, $userId, $userType);
-
-				http_response_code(201);
-				$this->data['message'] = 'New user: "' . $username . '" recorded into Users table successfully';
-
-				return true;
-			}
+		if ($stmtExec->affected_rows !== 1) {
+			$conn->rollback();
 
 			http_response_code(500);
 			$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
@@ -126,11 +134,13 @@ class UsersModel
 			return false;
 		}
 
-		http_response_code(500);
-		$this->data["error"] = "Failed query: " . $sql . " " . $conn->error;
-		$this->data["message"] = ucfirst($userType) . " account creation failed.";
+		$conn->commit();
+		$this->initializeSessionDetails($username, $userId, $userType);
 
-		return false;
+		http_response_code(201);
+		$this->data['message'] = 'New user: "' . $username . '" created successfully';
+
+		return true;
 	}
 
 

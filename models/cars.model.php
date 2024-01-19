@@ -23,6 +23,12 @@ class CarsModel
 		$this->conn = $conn;
 	}
 
+	public function setConn(mysqli $conn): void
+	{
+		$this->conn->close();
+		$this->conn = $conn;
+	}
+
 	public function getData(): array
 	{
 		return $this->data;
@@ -82,6 +88,7 @@ class CarsModel
 		$stmtExec = executePreparedStatement($conn, $sql, "iidss", $userId, $capacity, $rentPerDay, $model, $licenseNumber);
 
 		if ($stmtExec->affected_rows !== 1) {
+			$conn->rollback();
 			http_response_code(500);
 			$this->data["error"] = "Car addition failed";
 			$this->data["message"] = "Failed query: " . $sql . " " . $conn->error;
@@ -90,6 +97,8 @@ class CarsModel
 		}
 
 		$contr = new ImagesController();
+		// NOTE: Controllers connection is not closed as it will be overriden by the current callers connection thread
+		$contr->setConn($conn);
 		$contr->setMethod('POST');
 		$contr->setEndpoint("/api/Images/CarId/$conn->insert_id");
 		if (!$contr->processRequest()) {
@@ -98,7 +107,6 @@ class CarsModel
 			$this->data = array_merge($this->data, $contr->getData());
 			return false;
 		}
-		$contr->close();
 
 		$conn->commit();
 		http_response_code(201);

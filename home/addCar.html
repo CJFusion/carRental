@@ -7,7 +7,7 @@
 	<title>Add New Cars</title>
 	<!-- <link rel="stylesheet" type="text/css" href="../assets/app.css"> -->
 	<link rel="stylesheet" type="text/css" href="../assets/home.css">
-	<script type="text/javascript" src="../assets/app.js"></script>
+	<script type="module" src="../views/addCar.view.js"></script>
 	<!-- <script type="text/javascript" src="https://maraks-car-rental.000webhostapp.com/assets/app.js"></script> -->
 </head>
 
@@ -20,33 +20,33 @@
 			<h2>Lease a Car</h2>
 		</div>
 		<div class="gridItem">
-			<button class="profileBtn" onclick="toggle('profileOverlay')">
+			<button id="profileBtn" class="profileBtn btn">
 				<img class="home" src="../assets/SVGs/user-circle-svgrepo-com.svg" alt="User profile Svg" />
 			</button>
 
-			<div id="profileOverlay" class="profileOverlay">
+			<div id="profileOverlay" class="dispHidden">
 
 				<div class="gridRow profileOverlayContents">
 
 					<p id="userField"></p>
-					<!-- <button class="agencyBtn" onclick="profileOpts('addCar.html')">
+
+					<!-- <a href="addCar.html" class="agencyBtn btn">
 						<img src="../assets/SVGs/solid/car.svg" alt="Car Svg" />Add cars
-					</button> -->
+					</a> -->
 
-					<!-- <button classs="" onclick="profileOpts('')">
-							<img src="../assets/SVGs/enter-icon.svg" alt="Login Svg" />Login
-					</button> -->
+					<!-- <a href="#" class="btn">
+						<img src="../assets/SVGs/enter-icon.svg" alt="Login Svg" />Login
+					</a> -->
 
-					<!-- <button classs="" onclick="profileOpts('')">
-							<img src="../assets/SVGs/user-add-svgrepo-com.svg" alt="Signup Svg" />Signup
-					</button> -->
+					<!-- <a href="#" class="btn">
+						<img src="../assets/SVGs/user-add-svgrepo-com.svg" alt="Signup Svg" />Signup
+					</a> -->
 
-					<button class="" onclick="profileOpts('viewRentals.html')">
+					<a href="viewRentals.html" class="btn">
 						<img src="../assets/SVGs/solid/cart-arrow-down.svg" alt="Cart Svg" />View rentals
-					</button>
+					</a>
 
-
-					<button class="" onclick="logout()">
+					<button id="logoutBtn">
 						<img src="../assets/SVGs/logout-svgrepo-com.svg" alt="Logout Svg" />Logout
 					</button>
 				</div>
@@ -56,32 +56,26 @@
 	</nav>
 
 	<div id="formDiv" class="flexCentered">
-		<!-- <form action="upload.php" method="post" enctype="multipart/form-data"> -->
-		<form id="postCarForm" class="gridRow" method="POST" enctype="multipart/form-data"
-			onsubmitss="return addCar(event)">
+		<form id="postCarForm" class="gridRow" method="POST" enctype="multipart/form-data">
 			<label for="model">Model:</label>
-			<input type="text" id="model" name="model" oninput="validateInput(event, /[^a-zA-Z0-9- ]/g)" required>
+			<input type="text" id="model" name="model" required>
 
 			<label for="licenseNumber">License Number:</label>
 			<input type="text" id="licenseNumber" name="licenseNumber" maxlength="13"
-				pattern="^[a-zA-Z]{2}\s\d{2}\s[a-zA-Z]{2}\s\d{4}$" title="AA 00 AA 0000"
-				oninput="validateInput(event, /[^a-zA-Z0-9 ]/g)" required>
+				pattern="^[A-Z]{2}\s\d{2}\s[A-Z]{2}\s\d{4}$" title="AA 00 AA 0000" required>
 
 			<label for="capacity">Seating Capacity:</label>
-			<input type="number" id="capacity" name="capacity" min="1" max="99"
-				oninput="validateInput(event, /[^0-9]/g)" required>
+			<input type="number" id="capacity" name="capacity" min="1" max="99" required>
 
 			<label for="rentPerDay">Rent Per Day:</label>
-			<input type="number" id="rentPerDay" name="rentPerDay" min="1" oninput="validateInput(event, /[^0-9]/g)"
-				required>
+			<input type="number" id="rentPerDay" name="rentPerDay" min="1" required>
 
 			<span>
 				<label for="imageInput">Images:</label>
-				<input type="file" id="imageInput" value="hello" title="there" name="imageInput[]"
-					accept="image/jpeg, image/png, image/jpg" multiple required>
+				<input type="file" id="imageInput" title="Select 1-5 images to upload" accept="image/jpeg, image/png, image/jpg" name="imageInput[]" multiple required>
 			</span>
 
-			<div id="registerError"></div>
+			<div id="errorContainer" class="dispHidden"></div>
 			<input type="submit" value="Add Car">
 		</form>
 	</div>
@@ -174,108 +168,6 @@
 
 		}
 	</style>
-
-	<script>
-
-
-		const loadProfileOverlay = async (callBack = null) => {
-
-			const onSuccess = (data) => {
-				let userData = Object.values(data['userId'])[0];
-				return {
-					"fullName": userData.fullName,
-					"gender": Object(userData).hasOwnProperty('gender') ? userData.gender : 'Male'
-				};
-			}
-
-			let userData = await requestFetch('/api/Users/0', 'GET', {}, () => { }, onSuccess);
-			displayUser(userData.fullName, userData.gender);
-
-			if (callBack && typeof callBack === 'function')
-				callBack();
-		}
-
-		const displayUser = async (fullName, gender) => {
-			const userField = document.getElementById("userField");
-			const svgSrc = gender !== 'Female' ? 'man' : 'woman';
-
-			userField.innerHTML = `
-				<img src="${window.origin}/assets/SVGs/${svgSrc}-svgrepo-com.svg" alt="${gender} Svg" />
-				${fullName}
-			`;
-		};
-
-
-		function toggle(elementId) {
-			let element = document.getElementById(elementId);
-			if (element.style.display === "flex")
-				element.style.display = "none";
-			else
-				element.style.display = "flex";
-		}
-
-		const logout = () => requestFetch('/api/logout', 'GET', {}, () => { }, () => { });
-
-		const profileOpts = (htmlPage) => window.location.href = `./${htmlPage}`;
-
-
-		const addCar = (event) => {
-			event.preventDefault();
-
-			let formData = new FormData(event.target);
-
-			const onFailure = (data) => {
-				document.getElementById("registerError").style.display = 'flex';
-				document.getElementById("registerError").textContent = data.message;
-			}
-
-			const onSuccess = (data) => {
-				window.location.href = window.location.origin + '/home/rentCar.html'
-			}
-
-			requestFetch('/api/Cars', 'POST', formData, onFailure, onSuccess);
-		}
-
-		document.getElementById('postCarForm').addEventListener('submit', function (event) {
-			event.preventDefault();
-			const fileInput = document.getElementById('imageInput');
-			const files = fileInput.files;
-
-			if (files.length < 1 || files.length > 3) {
-				// Prevent form submission
-				document.getElementById('registerError').style.display = "flex";
-				document.getElementById('registerError').innerHTML = `Select ${minFiles} to ${maxFiles} files.`;
-
-				return;
-			}
-
-			let invalidFiles = [];
-			Object.values(files).forEach(file => {
-				if ((file.size / 1024) > 250)
-					invalidFiles.push(file.name);
-			});
-
-			if (invalidFiles.length > 0) {
-				document.getElementById('registerError').style.display = "flex";
-				document.getElementById('registerError').innerHTML = `File(s) "${invalidFiles.join(", ")}" size should not exceed 250KB.`;
-
-				return;
-			}
-
-			addCar(event);
-		});
-
-
-		window.document.addEventListener('DOMContentLoaded', function () {
-			console.log('DOMContentLoaded event fired. HTML content is fully loaded.');
-		});
-
-		window.addEventListener('load', function () {
-			console.log('load event fired. All external resources are fully loaded.');
-
-			loadProfileOverlay();
-		});
-	</script>
 </body>
 
 </html>
