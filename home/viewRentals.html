@@ -80,52 +80,6 @@
 	</div>
 
 	<div id="errorContainer" class="dispHidden"></div>
-
-	<style>
-		#itemBtnDiv {
-			display: flex;
-			width: calc(min(100%, 1200) - 6rem);
-			margin: 0 3rem;
-			padding-top: 1rem;
-			justify-content: space-between;
-
-			@media (min-width: 1200px) {
-				padding-left: calc((100% - 1200px) / 2);
-				padding-right: calc((100% - 1200px) / 2);
-			}
-
-
-			>button {
-				background: var(--primary-color-2);
-				color: var(--secondary-color-1);
-
-				font-size: large;
-				border: 0;
-				border-radius: 0.5rem;
-				padding: 0.25rem 0.5rem;
-
-				&:hover {
-					&:not([disabled]) {
-						background: var(--accent-color-1);
-					}
-
-					&[disabled] {
-						cursor: not-allowed;
-					}
-				}
-			}
-		}
-
-
-
-		.flexCentered {
-			display: flex;
-			position: relative;
-			/* flex-direction:row; */
-			justify-content: center;
-			align-items: center;
-		}
-	</style>
 </body>
 
 </html>

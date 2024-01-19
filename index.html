@@ -18,9 +18,9 @@
 	<script type="module" src="views/index.view.js"></script>
 </head>
 
-<body class="flexCentered maxViewPort greyBg">
+<body class="flexCentered maxViewPort bgColor">
 	<!-- Main Content -->
-	<div id="loginContainer" class="container">
+	<div class="container">
 		<form id="loginForm">
 			<input type="text" name="username" placeholder="Username" required>
 			<input type="password" name="password" placeholder="Password" required>
@@ -32,29 +32,16 @@
 	</div>
 
 	<!-- Overlay content -->
-	<div id="overlay" class="dispHidden">
+	<div id="overlay" class="maxViewPort dispHidden">
 		<div class="overlayContent">
 			<span id="overlayCloseBtn" class="closeBtn">&times;</span>
 			<h3>Choose account type</h3>
-			<span class="">
+			<span class="userSelect">
 				<a href="signUp/registerCustomer.html" class="registerBtn btn">Customer</a>
 				<a href="signUp/registerAgency.html" class="registerBtn btn">Rental Agency</a>
 			</span>
 		</div>
 	</div>
-
-	<style>
-		#loginContainer {
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-
-			>#overlayOpenBtn {
-				width: max-content;
-				align-self: center;
-			}
-		}
-	</style>
 </body>
 
 </html>

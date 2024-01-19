@@ -120,7 +120,7 @@ const createBookForm = (key) => {
 		<span class="tip">Set a reservation date</span>
 
 		<input type="hidden" name="carId" value = "${key}">
-		<input type="submit" class="book" value="Book">
+		<input type="submit" class="book btn" value="Book">
 	`;
 
 	bookForm.addEventListener('submit', (event) => addBooking(event));

@@ -1,14 +1,6 @@
 :root {
 	--pixelBorder: 1px solid #dadde18f;
-	--userIconSize: calc(0.4 * 1rem);
 }
-
-/* body>div:last-of-type:has(a) {
-	transform: scale(0) !important;
-	visibility: hidden !important;
-	position: absolute !important;
-	pointer-events: none !important;
-} */
 
 * {
 	padding: 0;
@@ -16,6 +8,34 @@
 	border: 0;
 
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.dispHidden {
+	display: none !important;
+}
+
+.opacityHidden {
+	opacity: 0 !important;
+}
+
+.bgColor {
+	background-color: #f4f4f4;
+}
+
+.hrule {
+	border-bottom: var(--pixelBorder);
+}
+
+.maxViewPort {
+	min-width: min(100svw, 100vw);
+	min-height: min(100svh, 100vh);
+}
+
+.flexCentered {
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items: center;
 }
 
 button,
@@ -34,15 +54,6 @@ button,
 		transform: translateY(20%);
 	}
 }
-
-.dispHidden {
-	display: none !important;
-}
-
-.opacityHidden {
-	opacity: 0 !important;
-}
-
 
 #errorContainer,
 .error {
@@ -70,141 +81,111 @@ button,
 	}
 }
 
-.vertMargins {
-	margin: 8px 0 8px 0;
-}
-
-.horizMargins {
-	margin: 0 8px 0 8px;
-}
-
-.hrule {
-	border-bottom: var(--pixelBorder);
-}
-
-.vrule {
-	border-left: var(--pixelBorder);
-}
-
-.flexCentered {
-	display: flex;
-	position: relative;
-	/* flex-direction:row; */
-	justify-content: center;
-	align-items: center;
-}
-
-.maxViewPort {
-	min-width: min(100svw, 100vw);
-	min-height: min(100svh, 100vh);
-}
-
-.greyBg {
-	background-color: #f4f4f4;
-}
-
-.flexItem:not(.occupyMin) {
-	flex: 1 1 auto;
-}
-
-/* 
-.flexItem:is(.occupyMin) {
-	flex: 1%;
-} */
-
-.flexItem+.flexItem {
-	border-left: var(--pixelBorder);
-}
-
 .container {
-	display: block;
-	margin: 20px 0;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 	background-color: white;
-	min-width: 300px;
-}
+	box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
 
-.signUpContainer {
-	width: clamp(300px, 50%, 500px);
-}
-
-.container form {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-}
-
-:is(div) h2 {
-	text-align: center;
-}
-
-.container form input,
-.container form select {
-	padding: 0.5rem;
-	border: 1px solid #ccc;
+	margin: 2rem auto;
+	padding: 1rem;
 	border-radius: 0.5rem;
-	cursor: pointer;
+	min-width: calc(300px - 2rem);
+
+	.hrule {
+		margin: 0.5rem 0;
+	}
+
+	h2 {
+		text-align: center;
+	}
+
+	&.signUpContainer {
+		width: clamp(calc(300px - 2rem), 70%, 500px);
+	}
+
+	>form {
+		display: flex;
+		flex-direction: column;
+	}
+
+	>form>input,
+	>form>select {
+		border: 1px solid #ccc;
+
+		padding: 0.5rem;
+		margin-bottom: 1rem;
+		border-radius: 0.5rem;
+		cursor: pointer;
+	}
+
+	&>#overlayOpenBtn {
+		width: max-content;
+		align-self: center;
+	}
 }
 
-/*#region Button properties*/
+/*#region Custom button properties*/
 
 .blueBtn,
 .greenBtn,
 .registerBtn {
+	color: #fff;
+
 	font-size: large;
 	font-weight: bolder;
-	color: #fff;
 }
 
 .blueBtn {
-	background-color: #007bff;
+	background: #007bff;
+
+	&:hover {
+		background: #0056b3;
+	}
 }
 
 .greenBtn {
-	background-color: #42b72a;
+	background: #42b72a;
+
+	&:hover {
+		background: #36a420;
+	}
 }
 
 .registerBtn {
-	font-size: small;
-	width: 100%;
+	background: #5a7096;
 	border: 1px solid #555;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-	background-color: #5a7096;
-}
 
-.blueBtn:hover {
-	background-color: #0056b3;
-}
+	font-size: small;
 
-.greenBtn:hover,
-.registerBtn:hover {
-	background-color: #36a420;
+	&:hover {
+		background: #36a420;
+	}
 }
 
 /*#endregion*/
 
 /*#region Overlay for Login */
 #overlay {
+	background: rgba(0, 0, 0, 0.5);
+
 	display: flex;
 	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
+	justify-content: center;
+	align-items: center;
 
 	>.overlayContent {
+		background: #dbd3d3;
+		box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+
 		position: absolute;
 		text-align: center;
-		top: 50%;
-		left: 50%;
-		padding: 16px;
-		transform: translate(-50%, -50%);
+		padding: 1rem;
 		min-width: 240px;
-		border-radius: 8px;
-		background-color: #dbd3d3;
+		border-radius: 0.5rem;
 
-		>span:has(a) {
+		>.userSelect {
 			display: grid;
 			grid-auto-flow: column;
 			grid-auto-columns: 1fr;
@@ -213,7 +194,7 @@ button,
 			justify-content: center;
 		}
 
-		>span>a.registerBtn {
+		>.userSelect>.registerBtn {
 			margin: unset;
 			width: auto;
 			text-decoration: none;
@@ -222,12 +203,13 @@ button,
 	}
 
 	>.overlayContent>.closeBtn {
+		color: #555;
+
 		position: absolute;
 		top: 0;
 		right: 0.5rem;
 		cursor: pointer;
-		font-size: 1.25rem;
-		color: #555;
+		font-size: 1.5rem;
 		transition: color 0.3s ease-in-out;
 
 		&:hover {
