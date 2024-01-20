@@ -1,7 +1,7 @@
 archived/
-assets/SVGs/
+assets/SVGs/brands
+assets/SVGs/regular
 assets/fontawesome-free-6.5.1-web/
 assets/how_to_use_php_post.html
-uploads/*
 fiveserver.config.js
 .htaccess
