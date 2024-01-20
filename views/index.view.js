@@ -5,8 +5,7 @@ document.getElementById('profileBtn').addEventListener('click', () => toggle('pr
 const addBooking = async (event) => {
 	event.preventDefault();
 	const isLoggedIn = await requestFetch('/api/Users/IsLoggedIn', 'GET', {}, () => { }, (data) => { return data.bool });
-	if(!isLoggedIn)
-	{
+	if (!isLoggedIn) {
 		alert("You are currently not logged in as a customer.")
 		window.location.href = window.origin + '/home/login.html';
 	}
@@ -19,6 +18,8 @@ const addBooking = async (event) => {
 
 	const onSuccess = (data) => {
 		alert(`Booked car successfully.`);
+		event.target.reset();
+		event.target.querySelector(".totalCost").textContent = "0.00";
 	}
 
 	requestFetch('/api/Bookings', 'POST', formData, onFailure, onSuccess);
@@ -45,9 +46,9 @@ const getCarList = async () => {
 const displayCars = async () => {
 	let getList = await getCarList();
 	let userType = await requestFetch('/api/Users/0', 'GET', {}, () => { }, (data) => {
-		if(!Object(data).hasOwnProperty('userId'))
-			return "none"; 
-		return Object.values(data['userId'])[0].userType 
+		if (!Object(data).hasOwnProperty('userId'))
+			return "none";
+		return Object.values(data['userId'])[0].userType
 	});
 
 	document.getElementById('loadingContainer').classList.add('dispHidden');
@@ -109,27 +110,36 @@ const displayCars = async () => {
 			carDetails.querySelector(`#item_${key}`).addEventListener('load', () => handleImageLoad(key));
 
 			if (userType.toLowerCase() !== "agency")
-				carDetails.appendChild(createBookForm(key));
+				carDetails.appendChild(createBookForm(key, car.rentPerDay));
 			carListDiv.appendChild(carDetails);
 		})
 	});
 }
 
-const createBookForm = (key) => {
+const createBookForm = (key, rentPerDay) => {
 	let bookForm = document.createElement("form");
 	bookForm.classList.add("bookForm");
 
 	bookForm.innerHTML = `
-		<input type="number" class="input" min="1" max="31" name="daysBooked" title="1 month booking max" placeholder="Booking duration in days" required>
+		<input type="number" id="daysInput_${key}" class="input" min="1" max="31" name="daysBooked" title="1 month booking max" placeholder="Booking duration in days" required>
 		<span class="tip"><div>Set the rental period in days</div>[Max 31]</span>
 
 		<input type="date" class="input" name="bookDate" placeholder="Reservation date" required>
 		<span class="tip">Set a reservation date</span>
 
 		<input type="hidden" name="carId" value = "${key}">
-		<input type="submit" class="book btn" value="Book">
+		<div class="actions">
+			<input type="submit" class="book btn" value="Book">
+			<p class="book">
+				<img src="../assets/SVGs/rupee-sign-svgrepo-com.svg" alt="Rupee" />
+				<span class="totalCost">0.00</span>
+			</p>
+		</div>
 	`;
 
+	bookForm.querySelector(`#daysInput_${key}`).addEventListener('input', (event) => {
+		bookForm.querySelector(".totalCost").textContent = (rentPerDay * event.target.value).toFixed(2);
+	});
 	bookForm.addEventListener('submit', (event) => addBooking(event));
 
 	return bookForm;

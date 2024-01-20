@@ -5,6 +5,7 @@
 	--primary-color-2: #293b47;
 
 	--secondary-color-1: #ffffff;
+	--secondary-color-1-filter: invert(96%) sepia(54%) saturate(0%) hue-rotate(106deg) brightness(111%) contrast(100%);
 
 	--accent-color-1: #6AB1AF;
 	--accent-color-1-filter: invert(56%) sepia(54%) saturate(329%) hue-rotate(126deg) brightness(95%) contrast(95%);
@@ -461,21 +462,42 @@ input {
 		border-radius: 0.25rem;
 	}
 
-	>input[type="submit"].book {
+	>:last-child {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+
 		grid-area: book;
 		grid-row: 1/-1;
+		height: 100%;
+		width: 12ch;
 
-		padding: 0.25rem 0.5rem;
-		/* width: max-content; */
-		/* height: max-content; */
+		justify-content: center;
+		align-items: center;
+	}
 
-		font-size: large;
-		font-weight: bold;
-		background: transparent;
+	>.actions>.book {
 		border-color: var(--accent-color-1);
 		color: var(--accent-color-1);
 
-		transition: all 0.2s ease-in;
+		width: max-content;
+		font-size: large;
+		font-weight: bold;
+		background: transparent;
+		transition: all 200ms ease-in;
+	}
+
+	>.actions>p.book {
+		color: var(--secondary-color-1);
+		font-size: medium;
+
+		>img {
+			filter: var(--secondary-color-1-filter);
+		}
+	}
+
+	>.actions>input.book {
+		padding: 0.25rem 0.5rem;
 
 		&:hover {
 			background: var(--primary-color-1);
@@ -530,7 +552,7 @@ body>button:active~* {
 	>div.gridItem>ul.customerList {
 		display: grid;
 		grid-column: 1/-1;
-		grid-auto-rows: auto;
+		grid-auto-rows: max-content;
 		margin: 1rem;
 		margin-top: 0;
 		gap: 1rem;

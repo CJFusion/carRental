@@ -9,14 +9,4 @@ function mysqliConnect()
 
 	return mysqli_connect($servername, $username, $password, $database);
 }
-
-$conn = mysqliConnect();
-// Check connection
-if (!$conn) {
-	$response = "Connection failed";
-}
-$response = "Connection successful";
-
-$GLOBALS['data'] = ["connStatus" => $response];
-unset($response);
 ?>
